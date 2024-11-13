@@ -33,7 +33,7 @@ export const useMyAuthStore = defineStore({
       if (data.value) {
       let userRole = data?.value?.user.role_view;
        // console.log("User data: ", userRole);
-        if (userRole !== 'admin' && userRole !== 'teacher') {
+        if (userRole !== 'dean' && userRole !== 'teacher') {
           //console.log("Invalid account type!");
           this.errorLogin = true;
           return error;

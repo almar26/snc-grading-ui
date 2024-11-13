@@ -1,69 +1,6 @@
 <template>
   <v-app>
- 
-    <v-navigation-drawer
-     theme="dark"
-      v-model="drawer"
-      elevation="0"
-      :rail="rail"
-      rail-width="120"
-      id="main-sidebar"
-    
-    >
-      <div class="image-container">
-        <v-img
-          src="/SNC-Logo.png"
-          alt="Centered Image"
-          class="rounded-image"
-        ></v-img>
-      </div>
-
-      <v-divider></v-divider>
-      <v-list nav>
-        <v-list-item-group>
-          <!-- <v-list-item v-for="(item, i) in items" :key="i" active-class="border" class="logout-border" :to="item.route">
-            <v-list-item-content>
-              <v-icon>{{ item.icon  }}</v-icon>
-              <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item> -->
-          <v-list-item active-class="border" class="logout-border" to="/">
-            <v-list-item-content>
-              <v-icon>mdi-view-dashboard</v-icon>
-              <v-list-item-subtitle>Dashboard</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item active-class="border" class="logout-border" to="/class">
-            <v-list-item-content>
-              <v-icon>mdi-account-group</v-icon>
-              <v-list-item-subtitle>Class</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="userData.role_view == 'dean'" active-class="border" class="logout-border" to="/teacher">
-            <v-list-item-content>
-              <v-icon>mdi-account</v-icon>
-              <v-list-item-subtitle>Teacher</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-
-      <template v-slot:append>
-        <v-list density="compact" nav>
-          <v-list-item-group>
-            <v-list-item class="logout-border" @click="logout()">
-              <v-list-item-content>
-                <v-icon>mdi-logout</v-icon>
-                <v-list-item-subtitle>
-                  Logout
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </template>
-    </v-navigation-drawer>
-       <v-app-bar  color="green-darken-2" prominent scroll-behavior="elevate">
+    <v-app-bar  color="green-darken-2" prominent scroll-behavior="elevate">
       <v-app-bar-nav-icon
         variant="text"
         @click.stop="drawer = !drawer"
@@ -104,10 +41,53 @@
         </v-menu>
       </div>
     </v-app-bar>
+    <v-navigation-drawer
+     theme="dark"
+      v-model="drawer"
+      elevation="0"
+      :rail="rail"
+      rail-width="120"
+      id="main-sidebar"
+    
+    >
+      <div class="image-container">
+        <v-img
+          src="/SNC-Logo.png"
+          alt="Centered Image"
+          class="rounded-image"
+        ></v-img>
+      </div>
+
+      <v-divider></v-divider>
+      <v-list nav>
+        <v-list-item-group>
+          <v-list-item v-for="(item, i) in items" :key="i" active-class="border" class="logout-border" :to="item.route">
+            <v-list-item-content>
+              <v-icon>{{ item.icon  }}</v-icon>
+              <v-list-item-subtitle>{{ item.title }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+
+      <template v-slot:append>
+        <v-list density="compact" nav>
+          <v-list-item-group>
+            <v-list-item class="logout-border" @click="logout()">
+              <v-list-item-content>
+                <v-icon>mdi-logout</v-icon>
+                <v-list-item-subtitle>
+                  Logout
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </template>
+    </v-navigation-drawer>
     
     <v-main>
       <v-container fluid>
-        
         <slot />
       </v-container>
     </v-main>
@@ -131,7 +111,9 @@ const rail = ref(true);
 const items = ref([
   { title: "Dashboard", route: "/", icon: "mdi-view-dashboard" },
   { title: "Class", route: "/class", icon: "mdi-account" },
-
+  { title: "Teachers", route: "/teachers", icon: "mdi-account-supervisor" },
+  // { title: "Courses", route: "/courses", icon: "mdi-book" },
+  // { title: "Curriculum", route: "/curriculum", icon: "mdi-card-text" },
 ]);
 
 const logout = () => {

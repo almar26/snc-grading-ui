@@ -1,5 +1,6 @@
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
+import { VTimePicker } from 'vuetify/labs/components'
 import { createVuetify } from 'vuetify'
 
 const customLightTheme = {
@@ -24,6 +25,9 @@ const customLightTheme = {
 
 export default defineNuxtPlugin((nuxtApp) => {
     const vuetify = createVuetify({
+        components: {
+            VTimePicker
+        },
         theme: {
             defaultTheme: 'customLightTheme',
             themes: {
