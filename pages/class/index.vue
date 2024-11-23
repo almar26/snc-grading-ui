@@ -31,27 +31,6 @@
           <v-form v-model="valid" ref="createClassForm" lazy-validation>
             <v-row dense>
               <v-col cols="12">
-                <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
-                <v-text-field
-                  label="Subject Code*"
-                  v-model="subjectCode"
-                  variant="outlined"
-                  :rules="rules.subjectCode"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Subject Description*"
-                  v-model="subjectDesc"
-                  variant="outlined"
-                  :rules="rules.subjectDesc"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <!-- <v-text-field
                   label="Course"
@@ -63,7 +42,7 @@
                 <v-select
                   color="primary"
                   :items="courses"
-                  item-title="description"
+                  item-title="code"
                   item-value="code"
                   label="Course*"
                   v-model="courseCode"
@@ -83,6 +62,40 @@
                   required
                 ></v-text-field>
               </v-col>
+              <v-col cols="12">
+                <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
+                <!-- <v-text-field
+                  label="Subject Code*"
+                  v-model="subjectCode"
+                  variant="outlined"
+                  :rules="rules.subjectCode"
+                  required
+                ></v-text-field> -->
+                <v-select
+                  color="primary"
+                  :items="subjectList"
+                  item-title="code"
+                  item-value="code"
+                  label="Subject Code*"
+                  v-model="subjectCode"
+                  :rules="rules.subjectCode"
+                  variant="outlined"
+                  return-object
+                  required
+                ></v-select>
+              </v-col>
+
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field
+                  label="Subject Description*"
+                  v-model="subjectDesc"
+                  variant="outlined"
+                  :rules="rules.subjectDesc"
+                  required
+                ></v-text-field>
+              </v-col>
+
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <v-text-field
@@ -245,6 +258,7 @@ const timeStart = ref(null);
 const timeEnd = ref(null);
 const itemDays = ref(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
 const courses = ref([]);
+const subjectList = ref([]);
 const createClassForm = ref(null);
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
@@ -260,9 +274,9 @@ const rules = ref({
 });
 
 async function showAddCourseDialog() {
-  getCoursesList()
-  dialog.value  = true;
-} 
+  getCoursesList();
+  dialog.value = true;
+}
 
 async function getCoursesList() {
   try {
@@ -276,29 +290,67 @@ async function getCoursesList() {
   }
 }
 
+async function getSubjectsByCourse(coursecode) {
+  try {
+    let result = await $fetch(`/api/subject/getSubjectsByCourse/${coursecode}`);
+    //console.log(result);
+    if (result) {
+      subjectList.value = result;
+    }
+  } catch (err) {
+    console.error("Failed ot fetch data: ", err);
+    throw err;
+  }
+}
+
 async function createClass() {
   const { valid, errors } = await createClassForm.value?.validate();
   if (valid) {
     const payload = {
       subject_code: subjectCode.value,
       subject_desc: subjectDesc.value,
-      course_code: courseCode.value,
+      course_code: courseCode.value?.code,
       section: section.value,
       units: units.value,
       semester: semester.value,
       school_year: schoolYear.value,
       days: days.value,
       time_start: timeStart.value,
-      time_end: timeEnd.value
+      time_end: timeEnd.value,
     };
 
     console.log("Class Details: ", payload);
   }
 }
 
-onMounted(async () => {
+onMounted(async () => {});
+
+watch([courseCode, subjectCode], async () => {
   
-})
+  if (courseCode.value) {
+    console.log("Selected Course: ", courseCode.value?.code);
+    getSubjectsByCourse(courseCode.value?.code);
+    
+
+    subjectList.value = []
+    console.log("Subject Code: ", subjectCode.value?.code)
+    if (subjectCode.value?.code === 'undefined') {
+      console.log("Undefined subject")
+    } 
+    // else {
+    //   console.log("Defined subject code")
+    //   //subjectDesc.value = 
+    // }
+  } 
+  if (subjectList.value.length === 0) {
+    console.log("Subject Code Empty: ", subjectCode.value)
+    subjectCode.value = ""
+  }
+
+
+  
+  
+});
 </script>
 
 <style></style>
