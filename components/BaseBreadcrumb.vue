@@ -27,7 +27,7 @@ defineProps({
 
 <style scoped>
 .page-breadcrumb {
-  margin: -15px -25px 20px -25px;
+  margin: -15px -16px 20px -25px;
   
 }
 .breadcrumbs-title {

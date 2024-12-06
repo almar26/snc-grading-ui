@@ -50,6 +50,7 @@
 
         <v-btn
           :disabled="!valid"
+          :loading="loading"
           color="primary"
           class="mt-5"
           rounded
@@ -110,6 +111,7 @@ const { errorLogin } = storeToRefs(useMyAuthStore()); // make errorLogin state r
 const { errorMessage } = storeToRefs(useMyAuthStore()); // make errorMessage state reactive
 
 const valid = ref(true);
+const loading = ref(false);
 const user = ref({
   identifier: "",
   password: "",
@@ -126,14 +128,17 @@ const text = ref("HHHHHH");
 // FUNCTIONS
 async function login() {
   const { valid, errors } = await loginForm.value?.validate();
+  loading.value = true;
   if (valid) {
     await authenticateUser(user.value); // call autheticateUser and pass the user object
     if (authenticated) {
+      loading.value = false;
       router.push("/");
     }
     if (errorLogin.value == true) {
       //console.log("Error login", errorLogin.value)
       snackbar.value = true;
+      loading.value = false;
       //console.log("Error Message:", errorMessage.value)
       if (errorMessage.value == "") {
         text.value = "Invalid identifier or password";
