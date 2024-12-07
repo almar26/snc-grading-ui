@@ -20,7 +20,7 @@ export const useMyAuthStore = defineStore({
     async authenticateUser({ identifier, password }: UserPayloadInterface) {
       const baseUrl = useRuntimeConfig().public.baseURL;
       const loginUrl = useRuntimeConfig().public.loginURL
-      const { data, pending, error }: any = await useFetch(`${loginUrl}`, {
+      const { data, pending, error }: any = await useFetch(`${baseUrl}/api/auth/local`, {
         method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: {
