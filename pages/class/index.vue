@@ -1,15 +1,9 @@
 <template>
   <div>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
     <v-row>
       <v-col>
-        <v-btn class="mb-3" color="primary" @click="showAddCourseDialog()"
-          >Add Record</v-btn
-        >
+        <v-btn class="mb-3" color="primary" @click="showAddCourseDialog()">Add Record</v-btn>
         <!-- <v-time-picker use-seconds></v-time-picker> -->
       </v-col>
     </v-row>
@@ -20,7 +14,7 @@
         <!-- <v-card-title><v-icon>mdi-book</v-icon> Add Course <v-spacer></v-spacer> <v-icon>mdi-close</v-icon></v-card-title> -->
         <v-toolbar>
           <v-icon class="ml-4">mdi-book</v-icon>
-          <v-toolbar-title>Add Course</v-toolbar-title>
+          <v-toolbar-title>Add Class</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="dialog = false">
             <v-icon>mdi-close</v-icon>
@@ -39,28 +33,13 @@
                   :rules="rules.courseCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="courses"
-                  item-title="code"
-                  item-value="code"
-                  label="Course*"
-                  v-model="courseCode"
-                  :rules="rules.courseCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="courses" item-title="code" item-value="code" label="Course*"
+                  v-model="courseCode" :rules="rules.courseCode" variant="outlined" return-object required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Section"
-                  v-model="section"
-                  variant="outlined"
-                  :rules="rules.section"
-                  required
-                ></v-text-field>
+                <v-text-field label="Section" v-model="section" variant="outlined" @input="section = section.toUpperCase()" :rules="rules.section"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
@@ -71,63 +50,30 @@
                   :rules="rules.subjectCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="subjectList"
-                  item-title="code"
-                  item-value="code"
-                  label="Subject Code*"
-                  v-model="subjectCode"
-                  :rules="rules.subjectCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Subject Description*"
-                  v-model="subjectDesc"
-                  variant="outlined"
-                  :rules="rules.subjectDesc"
-                  required
-                ></v-text-field>
+                <v-text-field label="Subject Description*" v-model="subjectDesc" @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined"
+                  :rules="rules.subjectDesc" required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Units"
-                  v-model="units"
-                  variant="outlined"
-                  :rules="rules.units"
-                  type="number"
-                  required
-                ></v-text-field>
+                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-select
-                  color="primary"
-                  v-model="semester"
-                  :items="['1st Semester', '2nd Semester', 'Summer']"
-                  variant="outlined"
-                  :rules="rules.semester"
-                  label="Semester*"
-                  required
-                ></v-select>
+                <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
+                  variant="outlined" :rules="rules.semester" label="Semester*" required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="School Year"
-                  v-model="schoolYear"
-                  variant="outlined"
-                  :rules="rules.schoolYear"
-                  required
-                ></v-text-field>
+                <v-text-field label="School Year" v-model="schoolYear" variant="outlined" :rules="rules.schoolYear"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
@@ -138,58 +84,24 @@
                   :rules="rules.days"
                   required
                 ></v-text-field> -->
-                <v-combobox
-                  v-model="days"
-                  :items="itemDays"
-                  label="Days"
-                  variant="outlined"
-                  :rules="rules.days"
-                >
+                <v-combobox v-model="days" :items="itemDays" label="Days" variant="outlined" :rules="rules.days">
                 </v-combobox>
               </v-col>
               <v-col cols="12">
                 <v-row>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeStart"
-                      :active="modal_start"
-                      :focused="modal_start"
-                      variant="outlined"
-                      label="Time Start"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_start"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_start"
-                          v-model="timeStart"
-                        ></v-time-picker>
+                    <v-text-field v-model="timeStart" :active="modal_start" :focused="modal_start" variant="outlined"
+                      label="Time Start" prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_start" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_start" v-model="timeStart"></v-time-picker>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeEnd"
-                      :active="modal_end"
-                      :focused="modal_end"
-                      variant="outlined"
-                      label="Time End"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_end"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_end"
-                          v-model="timeEnd"
-                        ></v-time-picker>
+                    <v-text-field v-model="timeEnd" :active="modal_end" :focused="modal_end" variant="outlined"
+                      label="Time End" prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_end" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_end" v-model="timeEnd"></v-time-picker>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
@@ -197,22 +109,14 @@
               </v-col>
             </v-row>
 
-            <small class="text-caption text-medium-emphasis"
-              >*indicates required field</small
-            >
+            <small class="text-caption text-medium-emphasis">*indicates required field</small>
           </v-form>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions class="mx-5 my-2">
-          <v-btn
-            block
-            color="green"
-            text="Save"
-            variant="flat"
-            @click="createClass()"
-          ></v-btn>
+          <v-btn block color="green" text="Save" variant="flat" @click="createClass()"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -259,6 +163,7 @@ const timeEnd = ref(null);
 const itemDays = ref(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
 const courses = ref([]);
 const subjectList = ref([]);
+const emptySubject = ref(false);
 const createClassForm = ref(null);
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
@@ -293,9 +198,23 @@ async function getCoursesList() {
 async function getSubjectsByCourse(coursecode) {
   try {
     let result = await $fetch(`/api/subject/getSubjectsByCourse/${coursecode}`);
-    //console.log(result);
     if (result) {
       subjectList.value = result;
+      if (result.length == 0) {
+        console.log("Course doesn't have subjects");
+        //emptySubject.value = true;
+        subjectCode.value = "";
+        subjectDesc.value = "";
+        units.value = 0;
+      }
+      let selectedCourse = courseCode.value?.code;
+      let subject = subjectCode.value?.course_code;
+      // console.log("COURSE SUBJECT: ", result[0].course_code)
+      if (selectedCourse != subject) {
+        subjectCode.value = "";
+        subjectDesc.value = "";
+        units.value = 0;
+      }
     }
   } catch (err) {
     console.error("Failed ot fetch data: ", err);
@@ -307,7 +226,7 @@ async function createClass() {
   const { valid, errors } = await createClassForm.value?.validate();
   if (valid) {
     const payload = {
-      subject_code: subjectCode.value,
+      subject_code: subjectCode.value?.code,
       subject_desc: subjectDesc.value,
       course_code: courseCode.value?.code,
       section: section.value,
@@ -323,34 +242,22 @@ async function createClass() {
   }
 }
 
-onMounted(async () => {});
+onMounted(async () => { });
 
 watch([courseCode, subjectCode], async () => {
-  
-  if (courseCode.value) {
-    console.log("Selected Course: ", courseCode.value?.code);
-    getSubjectsByCourse(courseCode.value?.code);
-    
 
-    subjectList.value = []
-    console.log("Subject Code: ", subjectCode.value?.code)
-    if (subjectCode.value?.code === 'undefined') {
-      console.log("Undefined subject")
-    } 
-    // else {
-    //   console.log("Defined subject code")
-    //   //subjectDesc.value = 
-    // }
-  } 
-  if (subjectList.value.length === 0) {
-    console.log("Subject Code Empty: ", subjectCode.value)
-    subjectCode.value = ""
+  if (courseCode.value) {
+    //console.log("Selected Course: ", courseCode.value?.code);
+    getSubjectsByCourse(courseCode.value?.code);
+    if (subjectCode.value) {
+      console.log("Subject: ", subjectCode.value)
+      subjectDesc.value = subjectCode.value?.title
+      units.value = subjectCode.value?.units
+    }
   }
 
-
-  
-  
 });
+
 </script>
 
 <style></style>
