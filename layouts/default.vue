@@ -91,8 +91,9 @@
                 <v-avatar color="green">
                   <v-icon icon="mdi-account-circle"></v-icon>
                 </v-avatar>
-                <h3 class="mt-2">{{ userData.username }}</h3>
-                <p class="text-caption mt-1">{{ userData.email }}</p>
+                <h3 class="mt-2 text-caption">{{ userData.username }}</h3>
+                <h4 class="mt-1">{{ userData.first_name }} {{ userData.last_name }}</h4>
+                <p class="text-caption mt-1">Department: {{ userData.department }}</p>
                 <v-divider class="my-3"></v-divider>
                 <v-btn prepend-icon="mdi-pencil" variant="text" rounded>
                   Edit Account
