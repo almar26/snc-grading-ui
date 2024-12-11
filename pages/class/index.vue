@@ -1,21 +1,78 @@
 <template>
   <div>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
     <v-row>
       <v-col>
-        <v-btn
-          class="mb-3 text-capitalize"
-          prepend-icon="mdi-plus"
-          color="primary"
-          @click="showAddCourseDialog()"
-          >Create Class</v-btn
-        >
-        <!-- <v-time-picker use-seconds></v-time-picker> -->
-        <v-card> </v-card>
+        <v-skeleton-loader class="mx-auto" elevation="0" color="transparent" :loading="loader"
+          type="article, list-item-two-line">
+
+          <v-card elevation="0" color="transparent">
+            <v-toolbar elevation="0" dense color="transparent">
+              <v-btn class="mb-3 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
+                @click="showAddCourseDialog()">Create Class</v-btn>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+
+
+            <v-row no-gutters>
+              <v-col cols="12" v-for="item in classList" :key="item.id">
+                <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
+                  <v-row no-gutters>
+                    <v-col cols="8" md="4" class="pl-5">
+                      <div class="c-name mt-3">{{ item.subject_code }}</div>
+                      <div class="c-brgy mb-3">{{ item.subject_description }}</div>
+                    </v-col>
+                    <v-col cols="12" md="8">
+                      <v-table density="compact">
+                        <thead>
+                          <tr>
+                            <th class="text-left title-table">
+                              Course & Section
+                            </th>
+                            <th class="text-left title-table">
+                              Semester
+                            </th>
+                            <th class="text-left title-table">
+                              School Year
+                            </th>
+                            <th class="text-left title-table">
+                              Days
+                            </th>
+                            <th class="text-left title-table">
+                              Time
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="value-table">{{ item.course_code }}-{{ item.section }}</td>
+                            <td class="value-table">{{ item.semester }}</td>
+                            <td class="value-table">{{ item.school_year }}</td>
+                            <td class="value-table">{{ item.days }}</td>
+                            <td class="value-table">{{ item.time_start }} - {{ item.time_end }}</td>
+                          </tr>
+                        </tbody>
+                      </v-table>
+                    </v-col>
+                    <!-- <v-col cols="12" md="2" class="text-right">
+                      <v-btn class="btn-check" color="primary" size="small" icon="mdi-open-in-new" elevation="0"
+                        :to="`/class/${item.documentId}`" v-show="true"></v-btn>
+                      <v-btn class="btn-check" color="red" size="small" icon="mdi-delete" elevation="0"
+                        v-show="true"></v-btn>
+                    </v-col> -->
+
+                    <!-- <v-col cols="12" md="1" class="text-right">
+                      <v-btn class="btn-check" color="primary" elevation="0" :to="`/class/${item.documentId}`"
+                        v-show="true">View</v-btn>
+                    </v-col> -->
+
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card>
+
+        </v-skeleton-loader>
       </v-col>
     </v-row>
 
@@ -23,9 +80,9 @@
     <v-dialog max-width="500" v-model="createClassDialog" scrollable persistent>
       <v-card>
         <!-- <v-card-title><v-icon>mdi-book</v-icon> Add Course <v-spacer></v-spacer> <v-icon>mdi-close</v-icon></v-card-title> -->
-        <v-toolbar>
+        <v-toolbar color="primary" density="compact">
           <v-icon class="ml-4">mdi-book</v-icon>
-          <v-toolbar-title>Add Class</v-toolbar-title>
+          <v-toolbar-title>Create Class</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="createClassDialog = false">
             <v-icon>mdi-close</v-icon>
@@ -44,29 +101,13 @@
                   :rules="rules.courseCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="courses"
-                  item-title="code"
-                  item-value="code"
-                  label="Course*"
-                  v-model="courseCode"
-                  :rules="rules.courseCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="courses" item-title="code" item-value="code" label="Course*"
+                  v-model="courseCode" :rules="rules.courseCode" variant="outlined" return-object required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Section"
-                  v-model="section"
-                  variant="outlined"
-                  @input="section = section.toUpperCase()"
-                  :rules="rules.section"
-                  required
-                ></v-text-field>
+                <v-text-field label="Section" v-model="section" variant="outlined"
+                  @input="section = section.toUpperCase()" :rules="rules.section" required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
@@ -77,64 +118,31 @@
                   :rules="rules.subjectCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="subjectList"
-                  item-title="code"
-                  item-value="code"
-                  label="Subject Code*"
-                  v-model="subjectCode"
-                  :rules="rules.subjectCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Subject Description*"
-                  v-model="subjectDesc"
-                  @input="subjectDesc = subjectDesc.toUpperCase()"
-                  variant="outlined"
-                  :rules="rules.subjectDesc"
-                  required
-                ></v-text-field>
+                <v-text-field label="Subject Description*" v-model="subjectDesc"
+                  @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined" :rules="rules.subjectDesc"
+                  required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Units"
-                  v-model="units"
-                  variant="outlined"
-                  :rules="rules.units"
-                  type="number"
-                  required
-                ></v-text-field>
+                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-select
-                  color="primary"
-                  v-model="semester"
-                  :items="['1st Semester', '2nd Semester', 'Summer']"
-                  variant="outlined"
-                  :rules="rules.semester"
-                  label="Semester*"
-                  required
-                ></v-select>
+                <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
+                  variant="outlined" :rules="rules.semester" label="Semester*" required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="School Year"
-                  v-model="schoolYear"
-                  variant="outlined"
-                  :rules="rules.schoolYear"
-                  required
-                ></v-text-field>
+                <v-text-field label="School Year" v-model="schoolYear" variant="outlined" :rules="rules.schoolYear"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
@@ -145,74 +153,28 @@
                   :rules="rules.days"
                   required
                 ></v-text-field> -->
-                <v-combobox
-                  v-model="days"
-                  :items="itemDays"
-                  label="Days"
-                  variant="outlined"
-                  :rules="rules.days"
-                >
+                <v-combobox v-model="days" :items="itemDays" label="Days" variant="outlined" :rules="rules.days">
                 </v-combobox>
               </v-col>
               <v-col cols="12">
                 <v-row>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeStart"
-                      :active="modal_start"
-                      :focused="modal_start"
-                      :rules="rules.timeStart"
-                      hide-details="false"
-                      variant="outlined"
-                      label="Time Start"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_start"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_start"
-                          v-model="timeStart"
-                          format="24r"
-                          use-seconds
-                        ></v-time-picker>
-                        <v-btn
-                          color="primary"
-                          @click="modal_start = !modal_start"
-                          >Ok</v-btn
-                        >
+                    <v-text-field v-model="timeStart" :active="modal_start" :focused="modal_start"
+                      :rules="rules.timeStart" hide-details="false" variant="outlined" label="Time Start"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_start" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_start" v-model="timeStart" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_start = !modal_start">Ok</v-btn>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeEnd"
-                      :active="modal_end"
-                      :focused="modal_end"
-                      :rules="rules.timeEnd"
-                      hide-details="false"
-                      variant="outlined"
-                      label="Time End"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_end"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_end"
-                          v-model="timeEnd"
-                          format="24r"
-                          use-seconds
-                        ></v-time-picker>
-                        <v-btn color="primary" @click="modal_end = !modal_end"
-                          >Ok</v-btn
-                        >
+                    <v-text-field v-model="timeEnd" :active="modal_end" :focused="modal_end" :rules="rules.timeEnd"
+                      hide-details="false" variant="outlined" label="Time End"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_end" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_end" v-model="timeEnd" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_end = !modal_end">Ok</v-btn>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
@@ -229,13 +191,8 @@
         <v-divider></v-divider>
 
         <v-card-actions class="mx-5 my-2">
-          <v-btn
-            block
-            color="green"
-            text="Save"
-            variant="flat"
-            @click="createClass()"
-          ></v-btn>
+          <v-btn block color="green" text="Save" variant="flat" :loading="loadingCreateClass"
+            @click="createClass()"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -249,10 +206,10 @@ import { useToast } from "vue-toastification";
 const { userInfo } = storeToRefs(useMyAuthStore());
 const userData = ref(userInfo?.value.user);
 useHead({
-  title: "Class",
+  title: "Classes",
 });
 const page = ref({
-  title: "Class",
+  title: "List of Classes",
 });
 const breadcrumbs = ref([
   {
@@ -261,18 +218,15 @@ const breadcrumbs = ref([
     to: "/",
   },
   {
-    title: "class",
+    title: "classes",
     disabled: true,
   },
 ]);
 const toast = useToast();
-const time = ref(null);
-const menu2 = ref(false);
-const modal2 = ref(false);
+const loader = ref(true);
 const modal_start = ref(null);
 const modal_end = ref(false);
-
-const dialog = ref(false);
+const loadingCreateClass = ref(false);
 const createClassDialog = ref(false);
 const valid = ref(true);
 const subjectCode = ref("");
@@ -290,6 +244,7 @@ const courses = ref([]);
 const subjectList = ref([]);
 const emptySubject = ref(false);
 const createClassForm = ref(null);
+const classList = ref([])
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
   subjectDesc: [(v) => !!v || "Subject description is required"],
@@ -309,6 +264,8 @@ async function initialize() {
     );
     if (result) {
       console.log("List: ", result);
+      classList.value = result
+      loader.value = false
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
@@ -361,6 +318,7 @@ async function getSubjectsByCourse(coursecode) {
 
 async function createClass() {
   const { valid, errors } = await createClassForm.value?.validate();
+  loadingCreateClass.value = true;
   if (valid) {
     const payload = {
       teacher_id: userData.value.teacher_id,
@@ -383,26 +341,37 @@ async function createClass() {
       body: payload,
     }).then((response) => {
       if (response.status == "fail") {
-        console.log(response.message);
+        //console.log(response.message);
+        loadingCreateClass.value = false;
         toast.error(response.message);
       } else {
         createClassDialog.value = false;
+        loadingCreateClass.value = false;
         createClassForm.value?.reset();
         toast.success("Successfully created!");
         initialize();
       }
     });
-    console.log("Class Details: ", payload);
+    //console.log("Class Details: ", payload);
   } else {
     console.log(errors[0].errorMessages[0]);
+    loadingCreateClass.value = false;
   }
+}
+
+async function classDetails(item) {
+  console.log("Hello Class", item)
 }
 
 onMounted(async () => {
   initialize();
 });
 
-watch([courseCode, subjectCode], async () => {
+watch([createClassDialog, courseCode, subjectCode], async () => {
+  if (createClassDialog.value === false) {
+    console.log("Create Class dialog box closed");
+    createClassForm.value?.reset()
+  }
   if (courseCode.value) {
     //console.log("Selected Course: ", courseCode.value?.code);
     getSubjectsByCourse(courseCode.value?.code);
@@ -412,7 +381,85 @@ watch([courseCode, subjectCode], async () => {
       units.value = subjectCode.value?.units;
     }
   }
+
+
 });
 </script>
 
-<style></style>
+<style scoped>
+.order-card {
+  border-radius: 0;
+  height: 110px;
+}
+
+.btn-check {
+  border-radius: 0;
+  height: 78px !important;
+  width: 50px;
+}
+
+.c-card:hover {
+  /* border: 1px solid #024650; */
+  /* margin-top: 10px; */
+  box-shadow: 1px 1px 18px -1px #888888 !important;
+}
+
+/* .c-card:visited {
+  height: 400px;
+} */
+
+.c-number {
+  font-size: 40px;
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+
+.c-name {
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.c-brgy {
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #575757;
+}
+
+.c-name-dialog {
+  font-size: 25px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding-left: 10px;
+}
+
+.c-number-dialog {
+  font-size: 70px;
+  color: red;
+  text-align: right;
+  font-weight: bold;
+}
+
+.c-address-dialog {
+  font-size: 15px;
+  font-weight: bold;
+  padding-left: 10px;
+  color: #575757;
+}
+
+.btn-submit {
+  height: 40px !important;
+  width: 100px !important;
+}
+
+.title-table {
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
+.value-table {
+  font-size: 13px !important;
+}
+</style>
