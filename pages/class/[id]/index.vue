@@ -100,7 +100,7 @@
 
 
     <!-- DIALOG BOX -->
-    <v-dialog max-width="1000" v-model="addStudentDialog" scrollable persistent>
+    <v-dialog max-width="900" v-model="addStudentDialog" scrollable persistent>
       <v-card elevation="0">
         <v-toolbar color="primary" density="compact">
           <v-icon class="ml-4">mdi-account-group</v-icon>
@@ -205,9 +205,9 @@ const studentHeaders = ref([
   { title: "Lastname", key: "last_name", sortable: false },
   { title: "Firstname", key: "first_name", sortable: false },
   { title: "Middlename", key: "middle_name", sortable: false },
-  { title: "Course", key: "course", sortable: false },
-  { title: "Course Code", key: "course_code", sortable: false },
-  { title: "Major", key: "major", sortable: false },
+  // { title: "Course", key: "course", sortable: false },
+  { title: "Course", key: "course_code", sortable: false },
+  // { title: "Major", key: "major", sortable: false },
   { title: "", key: "actions", align: "end", sortable: false },
 ]);
 const studentList = ref([])
