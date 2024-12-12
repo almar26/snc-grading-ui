@@ -42,15 +42,19 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (to.meta.layout === "dean" || to.meta.layout === "auth") {
       return navigateTo("/");
     }
-
   } else if (token.value && user_info.user.role_view === "teacher") {
     console.log("Teacher Account");
 
     if (to.meta.layout === "dean" || to.meta.layout === "auth") {
       return navigateTo("/");
     }
+
+    if (user_info.user.role_view === "teacher" && to.path === "/account") {
+      return navigateTo("/");
+    }
+
     //console.log("Basic Account");
-  } 
+  }
   // else if (token.value && user_info.user.role_view === "student") {
   //   console.log("Student Account");
   //   // if (to.meta.layout === 'default' || to.meta.layout === 'auth' || to.meta.layout === 'admin') {

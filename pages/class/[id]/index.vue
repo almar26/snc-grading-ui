@@ -1,65 +1,130 @@
 <template>
-  <div class="d-flex align-center justify-center" style="height: 60vh" v-if="isEmpty">
+  <div
+    class="d-flex align-center justify-center"
+    style="height: 60vh"
+    v-if="isEmpty"
+  >
     <v-card class="elevation-0 text-center py-16" color="transparent">
       <!-- <v-icon size="80" color="warning">mdi-alert-outline</v-icon> -->
       <!-- <v-img src="/public/maintenance.png" class="mx-auto" :width="150"></v-img> -->
       <p class="errorStatus">404</p>
       <div class="service-notif">Oops! Something is missing</div>
       <!-- <v-btn color="primary" class="mt-3" width="150" variant="outlined" @click="$router.back()" rounded>Go Back</v-btn> -->
-      <v-btn color="primary" class="mt-3" width="150" variant="outlined" to="/class" rounded>Go Back</v-btn>
+      <v-btn
+        color="primary"
+        class="mt-3"
+        width="150"
+        variant="outlined"
+        to="/class"
+        rounded
+        >Go Back</v-btn
+      >
     </v-card>
   </div>
   <div v-else>
-    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
-    <v-row>
+    <BaseBreadcrumb
+      :title="page.title"
+      :icon="page.icon"
+      :breadcrumbs="breadcrumbs"
+    ></BaseBreadcrumb>
+    <div
+      class="d-flex align-center justify-center"
+      style="height: 60vh"
+      v-if="loader"
+    >
+      <v-card class="elevation-0 text-center py-16" color="transparent">
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          indeterminate
+        ></v-progress-circular>
+        <div class="service-notif mt-5">Loading....</div>
+      </v-card>
+    </div>
+    <v-row v-else>
       <v-col cols="12" md="3">
         <v-card elevation="0">
           <v-toolbar color="transparent" density="comfortable">
-            <v-toolbar-title class="card-title text-body-1">Details
+            <v-toolbar-title class="card-title text-body-1"
+              >Details
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn color="warning" icon size="small" variant="text" @click="updateCourseDialog = true"><v-icon
-                size="large">mdi-pencil</v-icon>
-              <v-tooltip activator="parent" location="top">Edit</v-tooltip></v-btn>
-            <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
-                size="large">mdi-delete</v-icon><v-tooltip activator="parent" location="top">Delete</v-tooltip></v-btn>
+            <v-btn
+              color="warning"
+              icon
+              size="small"
+              variant="text"
+              @click="updateCourseDialog = true"
+              ><v-icon size="large">mdi-pencil</v-icon>
+              <v-tooltip activator="parent" location="top"
+                >Edit</v-tooltip
+              ></v-btn
+            >
+            <v-btn
+              color="red"
+              icon
+              size="small"
+              variant="text"
+              @click="deleteCourseDialog = true"
+              ><v-icon size="large">mdi-delete</v-icon
+              ><v-tooltip activator="parent" location="top"
+                >Delete</v-tooltip
+              ></v-btn
+            >
           </v-toolbar>
           <v-divider></v-divider>
           <v-list density="compact">
             <v-list-item>
-              <v-list-item-subtitle class="title">Course & Section</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{
-                classDetails.course_code
-              }}-{{
+              <v-list-item-subtitle class="title"
+                >Course & Section</v-list-item-subtitle
+              >
+              <v-list-item-title class="desc"
+                >{{ classDetails.course_code }}-{{
                   classDetails.section
-                }}</v-list-item-title>
+                }}</v-list-item-title
+              >
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Subject</v-list-item-subtitle>
+              <v-list-item-title class="desc"
+                >{{ classDetails.subject_code }} -
+                {{ classDetails.subject_description }}</v-list-item-title
+              >
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-subtitle class="title"
+                >Semester</v-list-item-subtitle
+              >
               <v-list-item-title class="desc">{{
-                classDetails.subject_code
-              }} - {{ classDetails.subject_description }}</v-list-item-title>
+                classDetails.semester
+              }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-subtitle class="title">Semester</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{ classDetails.semester }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-subtitle class="title">School Year</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{ classDetails.school_year }}</v-list-item-title>
+              <v-list-item-subtitle class="title"
+                >School Year</v-list-item-subtitle
+              >
+              <v-list-item-title class="desc">{{
+                classDetails.school_year
+              }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Units</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{ classDetails.units }}</v-list-item-title>
+              <v-list-item-title class="desc">{{
+                classDetails.units
+              }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Days</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{ classDetails.days }}</v-list-item-title>
+              <v-list-item-title class="desc">{{
+                classDetails.days
+              }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Time</v-list-item-subtitle>
-              <v-list-item-title class="desc">{{ classDetails.time_start }} - {{ classDetails.time_end
-                }}</v-list-item-title>
+              <v-list-item-title class="desc"
+                >{{ classDetails.time_start }} -
+                {{ classDetails.time_end }}</v-list-item-title
+              >
             </v-list-item>
           </v-list>
         </v-card>
@@ -67,26 +132,48 @@
       <v-col cols="12" md="9">
         <v-card variant="flat">
           <v-toolbar color="transparent" class="pr-3" density="comfortable">
-
             <v-spacer></v-spacer>
-            <v-btn variant="flat" color="primary" class="text-capitalize px-4" @click="addStudentDialog = true">
-              <v-icon start>mdi-plus</v-icon>Add Student</v-btn>
+            <v-btn
+              variant="flat"
+              color="primary"
+              class="text-capitalize px-4"
+              @click="addStudentDialog = true"
+            >
+              <v-icon start>mdi-plus</v-icon>Add Student</v-btn
+            >
           </v-toolbar>
           <v-divider></v-divider>
           <v-card-text>
-            <v-data-table density="compact" :items="subjectList" :headers="headers" :loading="loading">
+            <v-data-table
+              density="compact"
+              :items="studentSubjectList"
+              :headers="headers"
+              :loading="loading"
+            >
               <template v-slot:[`item.actions`]="{ item }">
                 <v-tooltip text="Edit" location="top">
                   <template v-slot:activator="{ props }">
-                    <v-btn size="medium" variant="text" v-bind="props" @click="showUpdateSubjecyDialog(item)"
-                      icon="mdi-pencil" color="green">
+                    <v-btn
+                      size="medium"
+                      variant="text"
+                      v-bind="props"
+                      @click="showUpdateSubjecyDialog(item)"
+                      icon="mdi-pencil"
+                      color="green"
+                    >
                     </v-btn>
                   </template>
                 </v-tooltip>
                 <v-tooltip text="Delete" location="top">
                   <template v-slot:activator="{ props }">
-                    <v-btn size="medium" icon="mdi-delete" v-bind="props" @click="showDeleteSubjectDialog(item)"
-                      variant="text" color="red"></v-btn>
+                    <v-btn
+                      size="medium"
+                      icon="mdi-delete"
+                      v-bind="props"
+                      @click="showDeleteSubjectDialog(item)"
+                      variant="text"
+                      color="red"
+                    ></v-btn>
                   </template>
                 </v-tooltip>
 
@@ -97,7 +184,6 @@
         </v-card>
       </v-col>
     </v-row>
-
 
     <!-- DIALOG BOX -->
     <v-dialog max-width="900" v-model="addStudentDialog" scrollable persistent>
@@ -111,25 +197,45 @@
           </v-btn>
         </v-toolbar>
         <v-card-title class="d-flex align-center pe-2">
-
           <v-spacer></v-spacer>
           <v-spacer></v-spacer>
-          <v-text-field v-model="search" density="compact" label="Search" clearable prepend-inner-icon="mdi-magnify"
-            variant="outlined" flat hide-details single-line></v-text-field>
+          <v-text-field
+            v-model="search"
+            density="compact"
+            label="Search"
+            clearable
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            flat
+            hide-details
+            single-line
+          ></v-text-field>
         </v-card-title>
 
         <v-divider></v-divider>
         <v-card-text>
-          <v-data-table density="compact" v-model:search="search" :items="studentList" :headers="studentHeaders"
-            :loading="loading2">
+          <v-data-table
+            density="compact"
+            v-model:search="search"
+            :items="studentList"
+            :headers="studentHeaders"
+            :loading="loading2"
+          >
             <template v-slot:loading2>
               <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip text="Add Student" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn size="small" @click="addStudent(item)" class="mr-1" variant="flat" v-bind="props"
-                    prepend-icon="mdi-plus" color="green">
+                  <v-btn
+                    size="small"
+                    @click="addStudent(item)"
+                    class="mr-1"
+                    variant="flat"
+                    v-bind="props"
+                    prepend-icon="mdi-plus"
+                    color="green"
+                  >
                     Add
                   </v-btn>
                 </template>
@@ -138,17 +244,16 @@
           </v-data-table>
         </v-card-text>
       </v-card>
-
     </v-dialog>
-
   </div>
 </template>
 
 <script setup>
 import { useToast } from "vue-toastification";
-const router = useRouter()
+const router = useRouter();
 const route = useRoute();
 const toast = useToast();
+const loader = ref(true);
 const loading = ref(true);
 const loading2 = ref(true);
 const search = ref(null);
@@ -156,6 +261,7 @@ const search = ref(null);
 const classDetails = ref({});
 const isEmpty = ref(false);
 const addStudentDialog = ref(false);
+const studentSubjectList = ref([]);
 useHead({
   title: "Classes",
 });
@@ -187,9 +293,9 @@ const headers = ref([
   { title: "Lastname", key: "last_name", sortable: false },
   { title: "Firstname", key: "first_name", sortable: false },
   { title: "Middlename", key: "middle_name", sortable: false },
-  { title: "Course", key: "course", sortable: false },
-  { title: "Semester", key: "semester", sortable: false },
-  { title: "School Year", key: "school_year", sortable: false },
+  { title: "Course", key: "course_code", sortable: false },
+  // { title: "Semester", key: "semester", sortable: false },
+  // { title: "School Year", key: "school_year", sortable: false },
   { title: "Grade", key: "grade", sortable: false },
   { title: "Numeric", key: "numeric_grade", sortable: false },
   { title: "Remarks", key: "remarks", sortable: false },
@@ -210,7 +316,7 @@ const studentHeaders = ref([
   // { title: "Major", key: "major", sortable: false },
   { title: "", key: "actions", align: "end", sortable: false },
 ]);
-const studentList = ref([])
+const studentList = ref([]);
 
 async function initialize() {
   try {
@@ -219,6 +325,7 @@ async function initialize() {
     if (result) {
       classDetails.value = result[0];
       loading.value = false;
+      loader.value = false;
       if (result.length == 0) {
         isEmpty.value = true;
         loading.value = false;
@@ -245,6 +352,18 @@ async function getStudentList() {
     throw err;
   }
 }
+
+async function getStudentSubjectList() {
+  try {
+    let result = await $fetch(`/api/student-subject/list/${route.params.id}`);
+    if (result) {
+      studentSubjectList.value = result;
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
 async function addStudent(item) {
   //console.log("Added Student: ", item)
   let payload = {
@@ -260,21 +379,21 @@ async function addStudent(item) {
     school_year: classDetails.value?.school_year,
     grade: 0,
     numeric_grade: 0,
-    remarks: '',
-    teacher_id: classDetails.value?.teacher_id
-  }
+    remarks: "",
+    teacher_id: classDetails.value?.teacher_id,
+  };
   console.log("Added Student: ", payload);
-  await $fetch('/api/student-subject/createStudentSubject', {
+  await $fetch("/api/student-subject/createStudentSubject", {
     method: "POST",
-    body: payload
-  }).then(response => {
-    if (response.status == 'fail') {
+    body: payload,
+  }).then((response) => {
+    if (response.status == "fail") {
       toast.error(response.message);
     } else {
       toast.success("Successfully added.");
-      initialize();
+      getStudentSubjectList();
     }
-  })
+  });
 }
 
 watch(addStudentDialog, async () => {
@@ -282,12 +401,12 @@ watch(addStudentDialog, async () => {
     //console.log("Add student dialog box opened")
     await getStudentList();
   }
-})
+});
 
 onMounted(async () => {
   await initialize();
-})
-
+  await getStudentSubjectList();
+});
 </script>
 
 <style scoped>
@@ -328,24 +447,25 @@ onMounted(async () => {
   border-bottom-right-radius: inherit;
 }
 
-:deep() .v-table .v-table__wrapper>table>thead>tr>th {
+:deep() .v-table .v-table__wrapper > table > thead > tr > th {
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-bottom: thick solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: thick solid
+    rgba(var(--v-border-color), var(--v-border-opacity));
   font-weight: bold;
   /* background-color: #04aa6d;
   color: white; */
 }
 
-:deep() .v-table .v-table__wrapper>table>tbody>tr>td:not(:last-child),
-.v-table .v-table__wrapper>table>tbody>tr>th:not(:last-child) {
+:deep() .v-table .v-table__wrapper > table > tbody > tr > td:not(:last-child),
+.v-table .v-table__wrapper > table > tbody > tr > th:not(:last-child) {
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
-:deep() .v-table .v-table__wrapper>table>tbody>tr:nth-child(even) {
+:deep() .v-table .v-table__wrapper > table > tbody > tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-:deep() .v-table .v-table__wrapper>table>tbody>tr:hover {
+:deep() .v-table .v-table__wrapper > table > tbody > tr:hover {
   background-color: #f2f2f2;
 }
 </style>
