@@ -151,16 +151,16 @@
               :loading="loading"
             >
               <template v-slot:[`item.actions`]="{ item }">
-                <v-tooltip text="Edit" location="top">
+                <v-tooltip text="Input Grade" location="top">
                   <template v-slot:activator="{ props }">
                     <v-btn
                       size="medium"
                       variant="text"
                       v-bind="props"
-                      @click="showUpdateSubjecyDialog(item)"
-                      icon="mdi-pencil"
-                      color="green"
+                      @click="showUpdateGradeDialog(item)"
+                      color="blue"
                     >
+                      <v-icon size="30">mdi-text-box-check</v-icon>
                     </v-btn>
                   </template>
                 </v-tooltip>
@@ -168,12 +168,27 @@
                   <template v-slot:activator="{ props }">
                     <v-btn
                       size="medium"
-                      icon="mdi-delete"
                       v-bind="props"
                       @click="showDeleteSubjectDialog(item)"
                       variant="text"
                       color="red"
-                    ></v-btn>
+                    >
+                      <v-icon size="30">mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                </v-tooltip>
+                <v-tooltip text="Finalize" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      size="medium"
+                      v-bind="props"
+                      @click="showDeleteSubjectDialog(item)"
+                      variant="text"
+                      color="green"
+                      class="ml-4"
+                    >
+                      <v-icon size="30">mdi-check-circle</v-icon>
+                    </v-btn>
                   </template>
                 </v-tooltip>
 
@@ -186,6 +201,7 @@
     </v-row>
 
     <!-- DIALOG BOX -->
+    <!-- Add student dialog -->
     <v-dialog max-width="900" v-model="addStudentDialog" scrollable persistent>
       <v-card elevation="0">
         <v-toolbar color="primary" density="compact">
@@ -245,6 +261,90 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <!-- Add grade dialog -->
+    <v-dialog max-width="500" v-model="updateGradeDialog" scrollable persistent>
+      <v-card elevation="0">
+        <v-toolbar color="primary" density="compact">
+          <v-icon class="ml-4">mdi-text-box-check</v-icon>
+          <v-toolbar-title> Update Grade</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="updateGradeDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-form v-model="valid" fast-fail ref="addGradeForm" lazy-validation>
+            <v-row dense>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field
+                  label="Grade"
+                  v-model="grade"
+                  variant="outlined"
+                  type="number"
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field
+                  label="Numeric Grade"
+                  v-model="numericGrade"
+                  variant="outlined"
+                  required
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field
+                  label="Remarks"
+                  v-model="remarks"
+                  variant="outlined"
+                  @input="remarks = remarks.toUpperCase()"
+                  required
+                  readonly
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <label class="label mb-4" for="email">Other Remarks</label>
+                <v-row>
+                  <v-col cols="4"
+                    ><v-checkbox
+                      v-model="incomplete"
+                      color="green"
+                      label="Incomplete"
+                      hide-details
+                    ></v-checkbox
+                  ></v-col>
+                  <v-col cols="6"
+                    ><v-checkbox
+                      v-model="fda"
+                      color="green"
+                      label="Failed due to absences"
+                      hide-details
+                    ></v-checkbox
+                  ></v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn block color="primary" :loading="loadingAddGrade" @click="submitGrade()"
+                  >Submit</v-btn
+                >
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -257,11 +357,23 @@ const loader = ref(true);
 const loading = ref(true);
 const loading2 = ref(true);
 const search = ref(null);
+const valid = ref(true);
 // Class Details
 const classDetails = ref({});
 const isEmpty = ref(false);
 const addStudentDialog = ref(false);
 const studentSubjectList = ref([]);
+const updateGradeDialog = ref(false);
+const addGradeForm = ref(null);
+
+// Grade
+const studentSubjID = ref(0)
+const grade = ref(0);
+const numeric_grade = ref(0);
+const loadingAddGrade = ref(false)
+// const remarks = ref("")
+const fda = ref(false);
+const incomplete = ref(false);
 useHead({
   title: "Classes",
 });
@@ -316,6 +428,16 @@ const studentHeaders = ref([
   // { title: "Major", key: "major", sortable: false },
   { title: "", key: "actions", align: "end", sortable: false },
 ]);
+// const gradeRules = ref([ value => {
+//   if (value >= 101) return true
+//   return 'Firstname must be atleast 3 characters'
+// }])
+
+const rules = ref({
+  grade: [
+    (v) => !!v || "Grade is required",
+  ]
+})
 const studentList = ref([]);
 
 async function initialize() {
@@ -396,11 +518,116 @@ async function addStudent(item) {
   });
 }
 
-watch(addStudentDialog, async () => {
+async function showUpdateGradeDialog(item) {
+  console.log("Update Grade: ", item);
+  updateGradeDialog.value = true;
+  studentSubjID.value = item.document_id;
+  grade.value = item.grade;
+  numericGrade.value = item.numeric_grade
+}
+
+async function submitGrade() {
+  // let payload = {
+  //     grade: parseInt(grade.value),
+  //     numeric_grade: numericGrade.value,
+  //     remarks: remarks.value,
+  //   };
+  //   console.log("Submitted Grade: ", payload);
+    
+  const { valid, errors } = await addGradeForm.value?.validate();
+  if (valid) {
+    loadingAddGrade.value = true;
+    let payload = {
+      grade: parseInt(grade.value),
+      numeric_grade: numericGrade.value,
+      remarks: remarks.value,
+    };
+
+    await $fetch(`/api/student-subject/add-grade/${studentSubjID.value}`, {
+      method: "PUT",
+      body: payload
+    })
+    .then(response => {
+      console.log("Grade submitted: ", response);
+      updateGradeDialog.value = false;
+      loadingAddGrade.value = false;
+      toast.success("Grade successfully updated!");
+      getStudentSubjectList();
+    })
+
+    //toast.success("Successfully submitted.");
+    //console.log("Submitted Grade: ", payload);
+  } else {
+    console.log(errors[0].errorMessages[0]);
+  }
+}
+
+const numericGrade = computed(() => {
+  if (grade.value <= 100 && grade.value >= 98) {
+    return Number(1.0).toFixed(2);
+  } else if (grade.value <= 97 && grade.value >= 95) {
+    return Number(1.25).toFixed(2);
+  } else if (grade.value <= 94 && grade.value >= 92) {
+    return Number(1.5).toFixed(2);
+  } else if (grade.value <= 91 && grade.value >= 89) {
+    return Number(1.75).toFixed(2);
+  } else if (grade.value <= 88 && grade.value >= 86) {
+    return Number(2.0).toFixed(2);
+  } else if (grade.value <= 85 && grade.value >= 83) {
+    return Number(2.25).toFixed(2);
+  } else if (grade.value <= 82 && grade.value >= 80) {
+    return Number(2.5).toFixed(2);
+  } else if (grade.value <= 79 && grade.value >= 77) {
+    return Number(2.75).toFixed(2);
+  } else if (grade.value <= 76 && grade.value >= 75) {
+    return Number(3.0).toFixed(2);
+  } else if (grade.value <= 74 && grade.value > 0) {
+    return Number(5.0).toFixed(2);
+  } else if (grade.value > 100) {
+    return Number(0.0).toFixed(2);
+  }
+
+  // if (remarks.value == "INCOMPLETE") {
+  //   return Number(0.0).toFixed(2);
+  // }
+});
+
+const remarks = computed(() => {
+  if (grade.value <= 100 && grade.value >= 75) {
+    return "PASSED";
+  } else if (grade.value <= 74 && grade.value > 0) {
+    return "FAILED";
+  }
+  if (incomplete.value == true) {
+    return "INCOMPLETE";
+  } else if (fda.value == true) {
+    return "FAILED DUE TO ABSENCES";
+  }
+  if (grade.value == 0 && incomplete.value == false && fda.value == false) {
+    return "";
+  }
+});
+
+watch([addStudentDialog, updateGradeDialog, incomplete, fda, numericGrade], async () => {
   if (addStudentDialog.value == true) {
     //console.log("Add student dialog box opened")
     await getStudentList();
   }
+  if (updateGradeDialog.value == false) {
+    //createClassForm.value?.reset();
+    grade.value = 0;
+  }
+
+  if (incomplete.value == true) {
+    fda.value = false;
+  }
+  if (fda.value == true) {
+    incomplete.value = false;
+  }
+
+  // if (numericGrade.value == "INCOMPLETE") {
+  //   grade.value = 0;
+  // }
 });
 
 onMounted(async () => {
