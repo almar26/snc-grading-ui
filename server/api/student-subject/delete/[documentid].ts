@@ -6,21 +6,12 @@ export default defineEventHandler(async (event) => {
   const cookies = parseCookies(event);
   const token = cookies?.token
   try {
-    const body = await readBody(event);
-    const myPayload = {
-      grade: body.grade,
-      numeric_grade: body.numeric_grade,
-      remarks: body.remarks,
-      incomplete: body.incomplete,
-      fda: body.fda,
-      dropped: body.dropped
-    }
-
-    const result = await axios.put(`${BASE_URL}/api/student-subject/add-grade/${documentid}`, myPayload, {
+    const result = await axios.delete(`${BASE_URL}/api/student-subject/delete/${documentid}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
+
     if (result) {
       return result.data;
     }

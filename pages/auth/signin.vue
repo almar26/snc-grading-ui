@@ -34,6 +34,7 @@
           :rules="usernameRules"
           variant="outlined"
           label="Username"
+          @input="user.identifier = user.identifier.toUpperCase()"
           prepend-inner-icon="mdi-account"
           required
         ></v-text-field>

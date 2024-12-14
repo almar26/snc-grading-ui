@@ -143,41 +143,41 @@
             >
           </v-toolbar>
           <v-divider></v-divider>
-          <v-card-text>
-            <v-data-table
-              density="compact"
-              :items="studentSubjectList"
-              :headers="headers"
-              :loading="loading"
-            >
-              <template v-slot:[`item.actions`]="{ item }">
-                <v-tooltip text="Input Grade" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      size="medium"
-                      variant="text"
-                      v-bind="props"
-                      @click="showUpdateGradeDialog(item)"
-                      color="blue"
-                    >
-                      <v-icon size="30">mdi-text-box-check</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-                <v-tooltip text="Delete" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      size="medium"
-                      v-bind="props"
-                      @click="showDeleteSubjectDialog(item)"
-                      variant="text"
-                      color="red"
-                    >
-                      <v-icon size="30">mdi-delete</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-                <v-tooltip text="Finalize" location="top">
+
+          <v-data-table
+            density="compact"
+            :items="studentSubjectList"
+            :headers="headers"
+            :loading="loading"
+          >
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-tooltip text="Input Grade" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    size="medium"
+                    variant="text"
+                    v-bind="props"
+                    @click="showUpdateGradeDialog(item)"
+                    color="primary"
+                  >
+                    <v-icon size="30">mdi-text-box-check</v-icon>
+                  </v-btn>
+                </template>
+              </v-tooltip>
+              <v-tooltip text="Delete" location="top">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    size="medium"
+                    v-bind="props"
+                    @click="showDeleteGradeDialog(item)"
+                    variant="text"
+                    color="red"
+                  >
+                    <v-icon size="30">mdi-delete</v-icon>
+                  </v-btn>
+                </template>
+              </v-tooltip>
+              <!-- <v-tooltip text="Finalize" location="top">
                   <template v-slot:activator="{ props }">
                     <v-btn
                       size="medium"
@@ -190,12 +190,11 @@
                       <v-icon size="30">mdi-check-circle</v-icon>
                     </v-btn>
                   </template>
-                </v-tooltip>
+                </v-tooltip> -->
 
-                <!-- <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn> -->
-              </template>
-            </v-data-table>
-          </v-card-text>
+              <!-- <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn> -->
+            </template>
+          </v-data-table>
         </v-card>
       </v-col>
     </v-row>
@@ -273,7 +272,16 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-
+        <div class="mx-7 my-4">
+          <v-row no-gutters>
+            <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2">Student No.</v-col>
+            <v-col cols="8" class="text-subtitle-2">: {{ studentno }}</v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2">Name</v-col>
+            <v-col cols="8" class="text-subtitle-2">: {{ lastname }}, {{ firstname }} {{ middlename }}</v-col>
+          </v-row>
+        </div>
         <v-divider></v-divider>
         <v-card-text>
           <v-form v-model="valid" fast-fail ref="addGradeForm" lazy-validation>
@@ -323,11 +331,19 @@
                       hide-details
                     ></v-checkbox
                   ></v-col>
-                  <v-col cols="6"
+                  <v-col cols="4"
                     ><v-checkbox
                       v-model="fda"
                       color="green"
                       label="Failed due to absences"
+                      hide-details
+                    ></v-checkbox
+                  ></v-col>
+                  <v-col cols="4"
+                    ><v-checkbox
+                      v-model="dropped"
+                      color="green"
+                      label="Dropped"
                       hide-details
                     ></v-checkbox
                   ></v-col>
@@ -336,13 +352,49 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn block color="primary" :loading="loadingAddGrade" @click="submitGrade()"
+                <v-btn
+                  block
+                  color="primary"
+                  :loading="loadingAddGrade"
+                  @click="submitGrade()"
                   >Submit</v-btn
                 >
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Delete student subject Dialog -->
+    <v-dialog v-model="deleteStudentGradeDialog" width="auto">
+      <v-card
+        class="text-body-2"
+        color="#263238"
+        max-width="400"
+        prepend-icon="mdi-delete"
+        text="Are you sure you want to delete this student?"
+        :title="`Delete Student ${studentno}`"
+      >
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="text-none"
+            :loading="loadingDeleteGrade"
+            text="Delete"
+            prepend-icon="mdi-delete"
+            color="red"
+            variant="tonal"
+            @click="deleteStudentGrade()"
+          ></v-btn>
+          <v-btn
+            class="text-none"
+            text="Cancel"
+            prepend-icon="mdi-close"
+            variant="tonal"
+            @click="deleteStudentGradeDialog = false"
+          ></v-btn>
+        </template>
       </v-card>
     </v-dialog>
   </div>
@@ -367,13 +419,23 @@ const updateGradeDialog = ref(false);
 const addGradeForm = ref(null);
 
 // Grade
-const studentSubjID = ref(0)
+const deleteStudentGradeDialog = ref(false);
+const studentSubjID = ref(0);
+const studentno = ref("");
+const lastname = ref("");
+const firstname = ref("");
+const middlename = ref("");
+const course = ref("");
+const section = ref("");
 const grade = ref(0);
 const numeric_grade = ref(0);
-const loadingAddGrade = ref(false)
-// const remarks = ref("")
+const loadingAddGrade = ref(false);
+const loadingDeleteGrade = ref(false);
+const remarks = ref("");
 const fda = ref(false);
 const incomplete = ref(false);
+const dropped = ref(false);
+
 useHead({
   title: "Classes",
 });
@@ -434,10 +496,8 @@ const studentHeaders = ref([
 // }])
 
 const rules = ref({
-  grade: [
-    (v) => !!v || "Grade is required",
-  ]
-})
+  grade: [(v) => !!v || "Grade is required"],
+});
 const studentList = ref([]);
 
 async function initialize() {
@@ -522,43 +582,76 @@ async function showUpdateGradeDialog(item) {
   console.log("Update Grade: ", item);
   updateGradeDialog.value = true;
   studentSubjID.value = item.document_id;
+  studentno.value = item.student_no;
+  lastname.value = item.last_name;
+  firstname.value = item.first_name;
+  middlename.value = item.middle_name;
   grade.value = item.grade;
-  numericGrade.value = item.numeric_grade
+  numeric_grade.value = item.numeric_grade;
+  remarks.value = item.remarks;
+  incomplete.value = item.incomplete;
+  fda.value = item.fda;
+  dropped.value = item.dropped;
 }
 
 async function submitGrade() {
-  // let payload = {
-  //     grade: parseInt(grade.value),
-  //     numeric_grade: numericGrade.value,
-  //     remarks: remarks.value,
-  //   };
-  //   console.log("Submitted Grade: ", payload);
-    
   const { valid, errors } = await addGradeForm.value?.validate();
   if (valid) {
     loadingAddGrade.value = true;
+    if (grade.value === null || grade.value === "") {
+      console.log("Grade is empty");
+      grade.value = 0;
+    }
     let payload = {
       grade: parseInt(grade.value),
       numeric_grade: numericGrade.value,
       remarks: remarks.value,
+      incomplete: incomplete.value,
+      fda: fda.value,
+      dropped: dropped.value,
     };
 
     await $fetch(`/api/student-subject/add-grade/${studentSubjID.value}`, {
       method: "PUT",
-      body: payload
-    })
-    .then(response => {
+      body: payload,
+    }).then((response) => {
       console.log("Grade submitted: ", response);
       updateGradeDialog.value = false;
       loadingAddGrade.value = false;
       toast.success("Grade successfully updated!");
       getStudentSubjectList();
-    })
+    });
 
     //toast.success("Successfully submitted.");
     //console.log("Submitted Grade: ", payload);
   } else {
     console.log(errors[0].errorMessages[0]);
+  }
+}
+
+async function showDeleteGradeDialog(item) {
+  deleteStudentGradeDialog.value = true;
+  console.log(item);
+  studentno.value = item.student_no;
+  studentSubjID.value = item.document_id;
+}
+async function deleteStudentGrade() {
+  try {
+    loadingDeleteGrade.value = true;
+    let result = await $fetch(
+      `/api/student-subject/delete/${studentSubjID.value}`
+    );
+    if (result) {
+      loadingDeleteGrade.value = false;
+      deleteStudentGradeDialog.value = false;
+      toast.success(`Student ${studentno.value} deleted successfully!`);
+      getStudentSubjectList();
+      //navigateTo("/courses");
+    }
+  } catch (err) {
+    loadingDeleteGrade.value = false;
+    console.error("Failed to fetch data: ", err);
+    throw err;
   }
 }
 
@@ -585,6 +678,8 @@ const numericGrade = computed(() => {
     return Number(5.0).toFixed(2);
   } else if (grade.value > 100) {
     return Number(0.0).toFixed(2);
+  } else if (grade.value == 0) {
+    return Number(0.0).toFixed(2);
   }
 
   // if (remarks.value == "INCOMPLETE") {
@@ -592,43 +687,99 @@ const numericGrade = computed(() => {
   // }
 });
 
-const remarks = computed(() => {
-  if (grade.value <= 100 && grade.value >= 75) {
-    return "PASSED";
-  } else if (grade.value <= 74 && grade.value > 0) {
-    return "FAILED";
-  }
-  if (incomplete.value == true) {
-    return "INCOMPLETE";
-  } else if (fda.value == true) {
-    return "FAILED DUE TO ABSENCES";
-  }
-  if (grade.value == 0 && incomplete.value == false && fda.value == false) {
-    return "";
-  }
-});
+// const remarks = computed(() => {
+//   if (grade.value <= 100 && grade.value >= 75) {
+//     return "PASSED";
+//   } else if (grade.value <= 74 && grade.value > 0) {
+//     return "FAILED";
+//   } else if (grade.value > 100) {
+//     return "INVALID INPUT";
+//   }
 
-watch([addStudentDialog, updateGradeDialog, incomplete, fda, numericGrade], async () => {
-  if (addStudentDialog.value == true) {
-    //console.log("Add student dialog box opened")
-    await getStudentList();
-  }
-  if (updateGradeDialog.value == false) {
-    //createClassForm.value?.reset();
-    grade.value = 0;
-  }
+//   if (incomplete.value == true) {
+//     return "INCOMPLETE";
+//   } else if (fda.value == true) {
+//     return "FAILED DUE TO ABSENCES";
+//   }
 
-  if (incomplete.value == true) {
-    fda.value = false;
-  }
-  if (fda.value == true) {
-    incomplete.value = false;
-  }
+//   if (grade.value == 0 && incomplete.value == false && fda.value == false) {
+//     return "";
+//   }
+// });
 
-  // if (numericGrade.value == "INCOMPLETE") {
-  //   grade.value = 0;
-  // }
-});
+watch(
+  [
+    addStudentDialog,
+    updateGradeDialog,
+    incomplete,
+    fda,
+    remarks,
+    dropped,
+    grade,
+  ],
+  async () => {
+    if (addStudentDialog.value == true) {
+      //console.log("Add student dialog box opened")
+      await getStudentList();
+    }
+
+    if (incomplete.value == true) {
+      fda.value = false;
+      remarks.value = "INCOMPLETE";
+      dropped.value = false;
+      grade.value = 0;
+      //numericGrade.value = "0.00";
+    }
+    if (fda.value == true) {
+      grade.value = 0;
+      incomplete.value = false;
+      dropped.value = false;
+      remarks.value = "FAILED DUE TO ABSENCES";
+    }
+    if (dropped.value == true) {
+      grade.value = 0;
+      incomplete.value = false;
+      fda.value = false;
+      remarks.value = "DROPPED";
+    }
+    // if (incomplete.value == false && fda.value == false) {
+    //   //remarks.value = ""
+    // }
+
+    // if (numericGrade.value == "INCOMPLETE") {
+    //   grade.value = 0;
+    // }
+    if (updateGradeDialog.value == true) {
+      console.log("Update Grade Dialog box Opened");
+      // if (remarks.value == "INCOMPLETE") {
+      //   incomplete.value = true;
+      // }
+    } else if (updateGradeDialog.value == false) {
+      console.log("Update Grade Dialog Box Closed!");
+      fda.value = false;
+      incomplete.value = false;
+      dropped.value = false;
+    }
+
+    if (grade.value <= 100 && grade.value >= 75) {
+      remarks.value = "PASSED";
+      incomplete.value = false;
+      fda.value = false;
+      dropped.value = false;
+    } else if (grade.value <= 74 && grade.value > 0) {
+      remarks.value = "FAILED";
+    } else if (grade.value > 100) {
+      remarks.value = "INVALID INPUT";
+    } else if (
+      grade.value == 0 &&
+      incomplete.value == false &&
+      fda.value == false &&
+      dropped.value == false
+    ) {
+      remarks.value = "";
+    }
+  }
+);
 
 onMounted(async () => {
   await initialize();
