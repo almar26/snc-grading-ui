@@ -1,43 +1,19 @@
 <template>
-  <div
-    class="d-flex align-center justify-center"
-    style="height: 60vh"
-    v-if="isEmpty"
-  >
+  <div class="d-flex align-center justify-center" style="height: 60vh" v-if="isEmpty">
     <v-card class="elevation-0 text-center py-16" color="transparent">
       <!-- <v-icon size="80" color="warning">mdi-alert-outline</v-icon> -->
       <!-- <v-img src="/public/maintenance.png" class="mx-auto" :width="150"></v-img> -->
       <p class="errorStatus">404</p>
       <div class="service-notif">Oops! Something is missing</div>
       <!-- <v-btn color="primary" class="mt-3" width="150" variant="outlined" @click="$router.back()" rounded>Go Back</v-btn> -->
-      <v-btn
-        color="primary"
-        class="mt-3"
-        width="150"
-        variant="outlined"
-        to="/class"
-        rounded
-        >Go Back</v-btn
-      >
+      <v-btn color="primary" class="mt-3" width="150" variant="outlined" to="/class" rounded>Go Back</v-btn>
     </v-card>
   </div>
   <div v-else>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
-    <div
-      class="d-flex align-center justify-center"
-      style="height: 60vh"
-      v-if="loader"
-    >
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
+    <div class="d-flex align-center justify-center" style="height: 60vh" v-if="loader">
       <v-card class="elevation-0 text-center py-16" color="transparent">
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          indeterminate
-        ></v-progress-circular>
+        <v-progress-circular :size="70" :width="7" indeterminate></v-progress-circular>
         <div class="service-notif mt-5">Loading....</div>
       </v-card>
     </div>
@@ -45,64 +21,36 @@
       <v-col cols="12" md="3">
         <v-card elevation="0">
           <v-toolbar color="transparent" density="comfortable">
-            <v-toolbar-title class="card-title text-body-1"
-              >Details
+            <v-toolbar-title class="card-title text-body-1">Details
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn
-              color="warning"
-              icon
-              size="small"
-              variant="text"
-              @click="updateCourseDialog = true"
-              ><v-icon size="large">mdi-pencil</v-icon>
-              <v-tooltip activator="parent" location="top"
-                >Edit</v-tooltip
-              ></v-btn
-            >
-            <v-btn
-              color="red"
-              icon
-              size="small"
-              variant="text"
-              @click="deleteCourseDialog = true"
-              ><v-icon size="large">mdi-delete</v-icon
-              ><v-tooltip activator="parent" location="top"
-                >Delete</v-tooltip
-              ></v-btn
-            >
+            <v-btn color="warning" icon size="small" variant="text" @click="showUpdateClassDialog()"><v-icon
+                size="large">mdi-pencil</v-icon>
+              <v-tooltip activator="parent" location="top">Edit</v-tooltip></v-btn>
+            <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
+                size="large">mdi-delete</v-icon><v-tooltip activator="parent" location="top">Delete</v-tooltip></v-btn>
           </v-toolbar>
           <v-divider></v-divider>
           <v-list density="compact">
             <v-list-item>
-              <v-list-item-subtitle class="title"
-                >Course & Section</v-list-item-subtitle
-              >
-              <v-list-item-title class="desc"
-                >{{ classDetails.course_code }}-{{
-                  classDetails.section
-                }}</v-list-item-title
-              >
+              <v-list-item-subtitle class="title">Course & Section</v-list-item-subtitle>
+              <v-list-item-title class="desc">{{ classDetails.course_code }}-{{
+                classDetails.section
+              }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Subject</v-list-item-subtitle>
-              <v-list-item-title class="desc"
-                >{{ classDetails.subject_code }} -
-                {{ classDetails.subject_description }}</v-list-item-title
-              >
+              <v-list-item-title class="desc">{{ classDetails.subject_code }} -
+                {{ classDetails.subject_description }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-subtitle class="title"
-                >Semester</v-list-item-subtitle
-              >
+              <v-list-item-subtitle class="title">Semester</v-list-item-subtitle>
               <v-list-item-title class="desc">{{
                 classDetails.semester
               }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-subtitle class="title"
-                >School Year</v-list-item-subtitle
-              >
+              <v-list-item-subtitle class="title">School Year</v-list-item-subtitle>
               <v-list-item-title class="desc">{{
                 classDetails.school_year
               }}</v-list-item-title>
@@ -121,10 +69,8 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Time</v-list-item-subtitle>
-              <v-list-item-title class="desc"
-                >{{ classDetails.time_start }} -
-                {{ classDetails.time_end }}</v-list-item-title
-              >
+              <v-list-item-title class="desc">{{ classDetails.time_start }} -
+                {{ classDetails.time_end }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-card>
@@ -133,46 +79,24 @@
         <v-card variant="flat">
           <v-toolbar color="transparent" class="pr-3" density="comfortable">
             <v-spacer></v-spacer>
-            <v-btn
-              variant="flat"
-              color="primary"
-              class="text-capitalize px-4"
-              @click="addStudentDialog = true"
-            >
-              <v-icon start>mdi-plus</v-icon>Add Student</v-btn
-            >
+            <v-btn variant="flat" color="primary" class="text-capitalize px-4" @click="addStudentDialog = true">
+              <v-icon start>mdi-plus</v-icon>Add Student</v-btn>
           </v-toolbar>
           <v-divider></v-divider>
 
-          <v-data-table
-            density="compact"
-            :items="studentSubjectList"
-            :headers="headers"
-            :loading="loading"
-          >
+          <v-data-table density="compact" :items="studentSubjectList" :headers="headers" :loading="loading">
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip text="Input Grade" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn
-                    size="medium"
-                    variant="text"
-                    v-bind="props"
-                    @click="showUpdateGradeDialog(item)"
-                    color="primary"
-                  >
+                  <v-btn size="medium" variant="text" v-bind="props" @click="showUpdateGradeDialog(item)"
+                    color="primary">
                     <v-icon size="30">mdi-text-box-check</v-icon>
                   </v-btn>
                 </template>
               </v-tooltip>
               <v-tooltip text="Delete" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn
-                    size="medium"
-                    v-bind="props"
-                    @click="showDeleteGradeDialog(item)"
-                    variant="text"
-                    color="red"
-                  >
+                  <v-btn size="medium" v-bind="props" @click="showDeleteGradeDialog(item)" variant="text" color="red">
                     <v-icon size="30">mdi-delete</v-icon>
                   </v-btn>
                 </template>
@@ -200,6 +124,112 @@
     </v-row>
 
     <!-- DIALOG BOX -->
+    <!-- Update Class Dialog -->
+    <v-dialog max-width="500" v-model="updateClassDialog" scrollable persistent>
+      <v-card>
+        <!-- <v-card-title><v-icon>mdi-book</v-icon> Add Course <v-spacer></v-spacer> <v-icon>mdi-close</v-icon></v-card-title> -->
+        <v-toolbar color="primary" density="compact">
+          <v-icon class="ml-4">mdi-book</v-icon>
+          <v-toolbar-title>Update Class Details</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="updateClassDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-divider></v-divider>
+        <v-card-text class="mx-5">
+          <v-form v-model="valid" ref="updateClassForm" lazy-validation>
+            <v-row dense>
+              <v-col cols="12">
+                <v-select color="primary" :items="courses" item-title="code" item-value="code" label="Course*"
+                  v-model="courseCode" :rules="rules.courseCode" variant="outlined" return-object required></v-select>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field label="Section" v-model="section" variant="outlined"
+                  @input="section = section.toUpperCase()" :rules="rules.section" required></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
+                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
+              </v-col>
+
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field label="Subject Description*" v-model="subjectDesc"
+                  @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined" :rules="rules.subjectDesc"
+                  required></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                  required></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
+                  variant="outlined" :rules="rules.semester" label="Semester*" required></v-select>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <v-text-field label="School Year" v-model="schoolYear" variant="outlined" :rules="rules.schoolYear"
+                  required></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <!-- <label class="label mb-4" for="email">Student No</label> -->
+                <!-- <v-text-field
+                  label="Days"
+                  v-model="days"
+                  variant="outlined"
+                  :rules="rules.days"
+                  required
+                ></v-text-field> -->
+                <v-combobox v-model="days" :items="itemDays" label="Days" variant="outlined" :rules="rules.days">
+                </v-combobox>
+              </v-col>
+              <v-col cols="12">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="timeStart" :active="modal_start" :focused="modal_start"
+                      :rules="rules.timeStart" hide-details="false" variant="outlined" label="Time Start"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_start" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_start" v-model="timeStart" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_start = !modal_start">Ok</v-btn>
+                      </v-dialog>
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="timeEnd" :active="modal_end" :focused="modal_end" :rules="rules.timeEnd"
+                      hide-details="false" variant="outlined" label="Time End"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_end" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_end" v-model="timeEnd" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_end = !modal_end">Ok</v-btn>
+                      </v-dialog>
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+
+            <!-- <small class="text-caption text-medium-emphasis"
+              >*indicates required field</small
+            > -->
+          </v-form>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions class="mx-5 my-2">
+          <v-btn block color="green" text="Save" variant="flat" :loading="loadingUpdateClass"
+            @click="updateClass()"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Add student dialog -->
     <v-dialog max-width="900" v-model="addStudentDialog" scrollable persistent>
       <v-card elevation="0">
@@ -214,43 +244,25 @@
         <v-card-title class="d-flex align-center pe-2">
           <v-spacer></v-spacer>
           <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            density="compact"
-            label="Search"
-            clearable
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            flat
-            hide-details
-            single-line
-          ></v-text-field>
+          <v-text-field v-model="search" density="compact" label="Search" clearable prepend-inner-icon="mdi-magnify"
+            variant="outlined" flat hide-details single-line></v-text-field>
         </v-card-title>
 
         <v-divider></v-divider>
         <v-card-text>
-          <v-data-table
-            density="compact"
-            v-model:search="search"
-            :items="studentList"
-            :headers="studentHeaders"
-            :loading="loading2"
-          >
+          <v-data-table density="compact" v-model:search="search" :items="studentList" :headers="studentHeaders"
+            :loading="loading2">
             <template v-slot:loading2>
               <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+            </template>
+            <template v-slot:[`item.course_code`]="{ item }">
+              {{ item.course_code }}-{{ item.section }}
             </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip text="Add Student" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn
-                    size="small"
-                    @click="addStudent(item)"
-                    class="mr-1"
-                    variant="flat"
-                    v-bind="props"
-                    prepend-icon="mdi-plus"
-                    color="green"
-                  >
+                  <v-btn size="small" @click="addStudent(item)" class="mr-1" variant="flat" v-bind="props"
+                    prepend-icon="mdi-plus" color="green">
                     Add
                   </v-btn>
                 </template>
@@ -288,77 +300,36 @@
             <v-row dense>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Grade"
-                  v-model="grade"
-                  variant="outlined"
-                  type="number"
-                  required
-                ></v-text-field>
+                <v-text-field label="Grade" v-model="grade" variant="outlined" type="number" required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Numeric Grade"
-                  v-model="numericGrade"
-                  variant="outlined"
-                  required
-                  readonly
-                ></v-text-field>
+                <v-text-field label="Numeric Grade" v-model="numericGrade" variant="outlined" required
+                  readonly></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Remarks"
-                  v-model="remarks"
-                  variant="outlined"
-                  @input="remarks = remarks.toUpperCase()"
-                  required
-                  readonly
-                ></v-text-field>
+                <v-text-field label="Remarks" v-model="remarks" variant="outlined"
+                  @input="remarks = remarks.toUpperCase()" required readonly></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
                 <label class="label mb-4" for="email">Other Remarks</label>
                 <v-row>
-                  <v-col cols="4"
-                    ><v-checkbox
-                      v-model="incomplete"
-                      color="green"
-                      label="Incomplete"
-                      hide-details
-                    ></v-checkbox
-                  ></v-col>
-                  <v-col cols="4"
-                    ><v-checkbox
-                      v-model="fda"
-                      color="green"
-                      label="Failed due to absences"
-                      hide-details
-                    ></v-checkbox
-                  ></v-col>
-                  <v-col cols="4"
-                    ><v-checkbox
-                      v-model="dropped"
-                      color="green"
-                      label="Dropped"
-                      hide-details
-                    ></v-checkbox
-                  ></v-col>
+                  <v-col cols="4"><v-checkbox v-model="incomplete" color="green" label="Incomplete"
+                      hide-details></v-checkbox></v-col>
+                  <v-col cols="4"><v-checkbox v-model="fda" color="green" label="Failed due to absences"
+                      hide-details></v-checkbox></v-col>
+                  <v-col cols="4"><v-checkbox v-model="dropped" color="green" label="Dropped"
+                      hide-details></v-checkbox></v-col>
                 </v-row>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
-                <v-btn
-                  block
-                  color="primary"
-                  :loading="loadingAddGrade"
-                  @click="submitGrade()"
-                  >Submit</v-btn
-                >
+                <v-btn block color="primary" :loading="loadingAddGrade" @click="submitGrade()">Submit</v-btn>
               </v-col>
             </v-row>
           </v-form>
@@ -368,32 +339,14 @@
 
     <!-- Delete student subject Dialog -->
     <v-dialog v-model="deleteStudentGradeDialog" width="auto">
-      <v-card
-        class="text-body-2"
-        color="#263238"
-        max-width="400"
-        prepend-icon="mdi-delete"
-        text="Are you sure you want to delete this student?"
-        :title="`Delete Student ${studentno}`"
-      >
+      <v-card class="text-body-2" color="#263238" max-width="400" prepend-icon="mdi-delete"
+        text="Are you sure you want to delete this student?" :title="`Delete Student ${studentno}`">
         <template v-slot:actions>
           <v-spacer></v-spacer>
-          <v-btn
-            class="text-none"
-            :loading="loadingDeleteGrade"
-            text="Delete"
-            prepend-icon="mdi-delete"
-            color="red"
-            variant="tonal"
-            @click="deleteStudentGrade()"
-          ></v-btn>
-          <v-btn
-            class="text-none"
-            text="Cancel"
-            prepend-icon="mdi-close"
-            variant="tonal"
-            @click="deleteStudentGradeDialog = false"
-          ></v-btn>
+          <v-btn class="text-none" :loading="loadingDeleteGrade" text="Delete" prepend-icon="mdi-delete" color="red"
+            variant="tonal" @click="deleteStudentGrade()"></v-btn>
+          <v-btn class="text-none" text="Cancel" prepend-icon="mdi-close" variant="tonal"
+            @click="deleteStudentGradeDialog = false"></v-btn>
         </template>
       </v-card>
     </v-dialog>
@@ -402,6 +355,10 @@
 
 <script setup>
 import { useToast } from "vue-toastification";
+import { storeToRefs } from "pinia";
+import { useMyAuthStore } from "~/stores/auth";
+const { userInfo } = storeToRefs(useMyAuthStore());
+const userData = ref(userInfo?.value.user);
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
@@ -411,12 +368,42 @@ const loading2 = ref(true);
 const search = ref(null);
 const valid = ref(true);
 // Class Details
+const loadingUpdateClass = ref(false);
+const updateClassDialog = ref(false);
+const modal_start = ref(null);
+const modal_end = ref(false);
+const updateClassForm = ref(null);
 const classDetails = ref({});
 const isEmpty = ref(false);
 const addStudentDialog = ref(false);
 const studentSubjectList = ref([]);
 const updateGradeDialog = ref(false);
 const addGradeForm = ref(null);
+const subjectCode = ref("");
+const subjectDesc = ref("");
+const courseCode = ref("");
+// const section = ref("");
+const units = ref(0);
+const semester = ref("");
+const schoolYear = ref("");
+const days = ref("");
+const timeStart = ref(null);
+const timeEnd = ref(null);
+const itemDays = ref(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+const courses = ref([]);
+const subjectList = ref([]);
+const rules = ref({
+  subjectCode: [(v) => !!v || "Subject code is required"],
+  subjectDesc: [(v) => !!v || "Subject description is required"],
+  courseCode: [(v) => !!v || "Course code is required"],
+  section: [(v) => !!v || "Section is required"],
+  units: [(v) => !!v || "Units is required"],
+  semester: [(v) => !!v || "Semester is required"],
+  schoolYear: [(v) => !!v || "School Year is required"],
+  days: [(v) => !!v || "Days is required"],
+  timeStart: [(v) => !!v || "Time Start is required"],
+  timeEnd: [(v) => !!v || "Time End is required"],
+});
 
 // Grade
 const deleteStudentGradeDialog = ref(false);
@@ -495,9 +482,9 @@ const studentHeaders = ref([
 //   return 'Firstname must be atleast 3 characters'
 // }])
 
-const rules = ref({
-  grade: [(v) => !!v || "Grade is required"],
-});
+// const rules = ref({
+//   grade: [(v) => !!v || "Grade is required"],
+// });
 const studentList = ref([]);
 
 async function initialize() {
@@ -506,6 +493,16 @@ async function initialize() {
 
     if (result) {
       classDetails.value = result[0];
+      subjectCode.value = result[0].subject_code;
+      subjectDesc.value = result[0].subject_description;
+      courseCode.value = result[0].course_code;
+      section.value = result[0].section;
+      units.value = result[0].units;
+      semester.value = result[0].semester;
+      schoolYear.value = result[0].school_year;
+      days.value = result[0].days;
+      timeStart.value = result[0].time_start;
+      timeEnd.value = result[0].time_end;
       loading.value = false;
       loader.value = false;
       if (result.length == 0) {
@@ -532,6 +529,103 @@ async function getStudentList() {
     loading2.value = false;
     console.error("Failed to fetch data: ", err);
     throw err;
+  }
+}
+
+async function showUpdateClassDialog() {
+  getCoursesList();
+  updateClassDialog.value = true;
+}
+
+async function getCoursesList() {
+  try {
+    let result = await $fetch("/api/course/getCourseList");
+    if (result) {
+      courses.value = result;
+    }
+  } catch (err) {
+    console.error("Failed ot fetch data: ", err);
+    throw err;
+  }
+}
+
+async function getSubjectsByCourse(coursecode) {
+  try {
+    let result = await $fetch(`/api/subject/getSubjectsByCourse/${coursecode}`);
+    if (result) {
+      subjectList.value = result;
+      if (result.length == 0) {
+        console.log("Course doesn't have subjects");
+        //emptySubject.value = true;
+        subjectCode.value = "";
+        subjectDesc.value = "";
+        units.value = 0;
+      }
+      let selectedCourse = courseCode.value?.code;
+      let subject = subjectCode.value?.course_code;
+      // console.log("COURSE SUBJECT: ", result[0].course_code)
+      if (selectedCourse != subject) {
+        subjectCode.value = "";
+        subjectDesc.value = "";
+        units.value = 0;
+      }
+    }
+  } catch (err) {
+    console.error("Failed ot fetch data: ", err);
+    throw err;
+  }
+}
+
+async function updateClass() {
+  const { valid, errors } = await updateClassForm.value?.validate();
+  loadingUpdateClass.value = true;
+  if (valid) {
+    let course_code_update;
+    let subject_code_update;
+    if (courseCode.value?.code === undefined) {
+      course_code_update = courseCode.value
+      subject_code_update = subjectCode.value
+      console.log("course code payload undefined", course_code_update);
+    } else {
+      course_code_update = courseCode.value?.code
+      subject_code_update = subjectCode.value?.code
+      console.log("course code updated payload undefined", course_code_update);
+    }
+    const payload = {
+      teacher_id: userData.value.teacher_id,
+      subject_code: subject_code_update,
+      subject_desc: subjectDesc.value,
+      course_code: course_code_update,
+      section: section.value,
+      units: units.value,
+      semester: semester.value,
+      school_year: schoolYear.value,
+      days: days.value,
+      time_start: timeStart.value,
+      time_end: timeEnd.value,
+    };
+    console.log("Update Class: ", payload);
+
+    await $fetch(`/api/class/update/${route.params.id}`, {
+      method: "PUT",
+      body: payload,
+    }).then((response) => {
+      if (response.status == "fail") {
+        //console.log(response.message);
+        loadingUpdateClass.value = false;
+        toast.error(response.message);
+      } else {
+        updateClassDialog.value = false;
+        loadingUpdateClass.value = false;
+        updateClassForm.value?.reset();
+        toast.success("Successfully updated!");
+        initialize();
+      }
+    });
+    //console.log("Updated Class Details: ", payload);
+  } else {
+    console.log(errors[0].errorMessages[0]);
+    loadingUpdateClass.value = false;
   }
 }
 
@@ -711,11 +805,14 @@ watch(
   [
     addStudentDialog,
     updateGradeDialog,
+    updateClassDialog,
     incomplete,
     fda,
     remarks,
     dropped,
     grade,
+    courseCode,
+    subjectCode,
   ],
   async () => {
     if (addStudentDialog.value == true) {
@@ -778,6 +875,33 @@ watch(
     ) {
       remarks.value = "";
     }
+    if (updateClassDialog.value === false) {
+      console.log("Create Class dialog box closed");
+      //updateClassForm.value?.reset();
+      initialize();
+    }
+    if (courseCode.value?.code === undefined) {
+      console.log("course code undefined");
+    } else {
+      console.log("Course Code Value: ", courseCode.value);
+      getSubjectsByCourse(courseCode.value?.code);
+      if (subjectCode.value) {
+        //console.log("Subject: ", subjectCode.value);
+        subjectDesc.value = subjectCode.value?.title;
+        units.value = subjectCode.value?.units;
+      }
+    }
+    // if (courseCode.value) {
+    //   console.log("Course Code Value: ", courseCode.value)
+    //   getSubjectsByCourse(courseCode.value?.code);
+    //   if (subjectCode.value) {
+    //     //console.log("Subject: ", subjectCode.value);
+    //     subjectDesc.value = subjectCode.value?.title;
+    //     units.value = subjectCode.value?.units;
+    //   }
+    // }
+
+    // if (courseCode.value == )
   }
 );
 
@@ -825,25 +949,24 @@ onMounted(async () => {
   border-bottom-right-radius: inherit;
 }
 
-:deep() .v-table .v-table__wrapper > table > thead > tr > th {
+:deep() .v-table .v-table__wrapper>table>thead>tr>th {
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-bottom: thick solid
-    rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: thick solid rgba(var(--v-border-color), var(--v-border-opacity));
   font-weight: bold;
   /* background-color: #04aa6d;
   color: white; */
 }
 
-:deep() .v-table .v-table__wrapper > table > tbody > tr > td:not(:last-child),
-.v-table .v-table__wrapper > table > tbody > tr > th:not(:last-child) {
+:deep() .v-table .v-table__wrapper>table>tbody>tr>td:not(:last-child),
+.v-table .v-table__wrapper>table>tbody>tr>th:not(:last-child) {
   border-right: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
-:deep() .v-table .v-table__wrapper > table > tbody > tr:nth-child(even) {
+:deep() .v-table .v-table__wrapper>table>tbody>tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-:deep() .v-table .v-table__wrapper > table > tbody > tr:hover {
+:deep() .v-table .v-table__wrapper>table>tbody>tr:hover {
   background-color: #f2f2f2;
 }
 </style>
