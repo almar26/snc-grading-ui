@@ -1,39 +1,20 @@
 <template>
   <div>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
     <v-row>
       <v-col cols="12" md="12">
-        <v-skeleton-loader
-          v-if="loader"
-          class="mx-auto"
-          elevation="0"
-          color="transparent"
-          :loading="loader"
-          type="article, list-item-two-line"
-        >
+        <v-skeleton-loader v-if="loader" class="mx-auto" elevation="0" color="transparent" :loading="loader"
+          type="article, list-item-two-line">
         </v-skeleton-loader>
         <v-card elevation="0" color="transparent" v-else>
           <v-toolbar elevation="0" dense color="transparent">
-            <v-btn
-              class="mb-3 text-capitalize"
-              variant="flat"
-              prepend-icon="mdi-plus"
-              color="primary"
-              @click="showAddCourseDialog()"
-              >Create Class</v-btn
-            >
+            <v-btn class="mb-3 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
+              @click="showAddCourseDialog()">Create Class</v-btn>
             <v-spacer></v-spacer>
           </v-toolbar>
           <v-row v-if="noData">
             <v-col>
-              <div
-                class="d-flex align-center justify-center"
-                style="height: 50vh"
-              >
+              <div class="d-flex align-center justify-center" style="height: 50vh">
                 <v-card height="200" width="500" elevation="0" class="text-center d-flex align-center justify-center">
                   <v-card-text>
                     <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
@@ -45,12 +26,7 @@
           </v-row>
           <v-row no-gutters>
             <v-col cols="12" v-for="item in classList" :key="item.id">
-              <v-card
-                elevation="0"
-                class="c-card mb-2"
-                :to="`/class/${item.documentId}`"
-                :loading="false"
-              >
+              <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
                 <v-row no-gutters>
                   <v-col cols="12" md="3" class="pl-5">
                     <div class="c-name mt-3">{{ item.subject_code }}</div>
@@ -102,6 +78,10 @@
             </v-col>
           </v-row>
         </v-card>
+
+
+        <!-- <v-fab color="primary" icon="mdi-plus" location="bottom end" class="mb-4"  size="64" @click="showAddCourseDialog()" absolute app appear></v-fab> -->
+
       </v-col>
     </v-row>
 
@@ -130,29 +110,13 @@
                   :rules="rules.courseCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="courses"
-                  item-title="code"
-                  item-value="code"
-                  label="Course*"
-                  v-model="courseCode"
-                  :rules="rules.courseCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="courses" item-title="code" item-value="code" label="Course*"
+                  v-model="courseCode" :rules="rules.courseCode" variant="outlined" return-object required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Section"
-                  v-model="section"
-                  variant="outlined"
-                  @input="section = section.toUpperCase()"
-                  :rules="rules.section"
-                  required
-                ></v-text-field>
+                <v-text-field label="Section" v-model="section" variant="outlined"
+                  @input="section = section.toUpperCase()" :rules="rules.section" required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
@@ -163,64 +127,31 @@
                   :rules="rules.subjectCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="subjectList"
-                  item-title="code"
-                  item-value="code"
-                  label="Subject Code*"
-                  v-model="subjectCode"
-                  :rules="rules.subjectCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Subject Description*"
-                  v-model="subjectDesc"
-                  @input="subjectDesc = subjectDesc.toUpperCase()"
-                  variant="outlined"
-                  :rules="rules.subjectDesc"
-                  required
-                ></v-text-field>
+                <v-text-field label="Subject Description*" v-model="subjectDesc"
+                  @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined" :rules="rules.subjectDesc"
+                  readonly required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Units"
-                  v-model="units"
-                  variant="outlined"
-                  :rules="rules.units"
-                  type="number"
-                  required
-                ></v-text-field>
+                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                  readonly required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-select
-                  color="primary"
-                  v-model="semester"
-                  :items="['1st Semester', '2nd Semester', 'Summer']"
-                  variant="outlined"
-                  :rules="rules.semester"
-                  label="Semester*"
-                  required
-                ></v-select>
+                <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
+                  variant="outlined" :rules="rules.semester" label="Semester*" required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="School Year"
-                  v-model="schoolYear"
-                  variant="outlined"
-                  :rules="rules.schoolYear"
-                  required
-                ></v-text-field>
+                <v-text-field label="School Year" v-model="schoolYear" variant="outlined" :rules="rules.schoolYear"
+                  required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
@@ -231,74 +162,28 @@
                   :rules="rules.days"
                   required
                 ></v-text-field> -->
-                <v-combobox
-                  v-model="days"
-                  :items="itemDays"
-                  label="Days"
-                  variant="outlined"
-                  :rules="rules.days"
-                >
+                <v-combobox v-model="days" :items="itemDays" label="Days" variant="outlined" :rules="rules.days">
                 </v-combobox>
               </v-col>
               <v-col cols="12">
                 <v-row>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeStart"
-                      :active="modal_start"
-                      :focused="modal_start"
-                      :rules="rules.timeStart"
-                      hide-details="false"
-                      variant="outlined"
-                      label="Time Start"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_start"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_start"
-                          v-model="timeStart"
-                          format="24r"
-                          use-seconds
-                        ></v-time-picker>
-                        <v-btn
-                          color="primary"
-                          @click="modal_start = !modal_start"
-                          >Ok</v-btn
-                        >
+                    <v-text-field v-model="timeStart" :active="modal_start" :focused="modal_start"
+                      :rules="rules.timeStart" hide-details="false" variant="outlined" label="Time Start"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_start" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_start" v-model="timeStart" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_start = !modal_start">Ok</v-btn>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="timeEnd"
-                      :active="modal_end"
-                      :focused="modal_end"
-                      :rules="rules.timeEnd"
-                      hide-details="false"
-                      variant="outlined"
-                      label="Time End"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      readonly
-                    >
-                      <v-dialog
-                        v-model="modal_end"
-                        activator="parent"
-                        width="auto"
-                      >
-                        <v-time-picker
-                          v-if="modal_end"
-                          v-model="timeEnd"
-                          format="24r"
-                          use-seconds
-                        ></v-time-picker>
-                        <v-btn color="primary" @click="modal_end = !modal_end"
-                          >Ok</v-btn
-                        >
+                    <v-text-field v-model="timeEnd" :active="modal_end" :focused="modal_end" :rules="rules.timeEnd"
+                      hide-details="false" variant="outlined" label="Time End"
+                      prepend-inner-icon="mdi-clock-time-four-outline" readonly>
+                      <v-dialog v-model="modal_end" activator="parent" width="auto">
+                        <v-time-picker v-if="modal_end" v-model="timeEnd" format="24r" use-seconds></v-time-picker>
+                        <v-btn color="primary" @click="modal_end = !modal_end">Ok</v-btn>
                       </v-dialog>
                     </v-text-field>
                   </v-col>
@@ -315,14 +200,8 @@
         <v-divider></v-divider>
 
         <v-card-actions class="mx-5 my-2">
-          <v-btn
-            block
-            color="green"
-            text="Save"
-            variant="flat"
-            :loading="loadingCreateClass"
-            @click="createClass()"
-          ></v-btn>
+          <v-btn block color="green" text="Save" variant="flat" :loading="loadingCreateClass"
+            @click="createClass()"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

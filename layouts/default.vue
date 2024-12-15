@@ -1,19 +1,8 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      theme="dark"
-      v-model="drawer"
-      elevation="0"
-      :rail="rail"
-      rail-width="120"
-      id="main-sidebar"
-    >
+    <v-navigation-drawer theme="dark" v-model="drawer" elevation="0" :rail="rail" rail-width="120" id="main-sidebar">
       <div class="image-container">
-        <v-img
-          src="/SNC-Logo.png"
-          alt="Centered Image"
-          class="rounded-image"
-        ></v-img>
+        <v-img src="/SNC-Logo.png" alt="Centered Image" class="rounded-image"></v-img>
       </div>
 
       <v-divider></v-divider>
@@ -33,19 +22,14 @@
           </v-list-item>
           <v-list-item active-class="border" class="logout-border" to="/class">
             <v-list-item-content>
-              <v-icon>mdi-account-group</v-icon>
+              <v-icon>mdi-google-classroom</v-icon>
               <v-list-item-subtitle>Classes</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item
-            v-if="userData.role_view == 'dean'"
-            active-class="border"
-            class="logout-border"
-            to="/account"
-          >
+          <v-list-item v-if="userData.role_view == 'dean'" active-class="border" class="logout-border" to="/teachers">
             <v-list-item-content>
-              <v-icon>mdi-account</v-icon>
-              <v-list-item-subtitle>Account</v-list-item-subtitle>
+              <v-icon>mdi-account-group</v-icon>
+              <v-list-item-subtitle>Teachers</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -65,13 +49,14 @@
       </template> -->
     </v-navigation-drawer>
     <v-app-bar color="green-darken-2" prominent scroll-behavior="elevate">
-      <v-app-bar-nav-icon
-        variant="text"
-        @click.stop="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>SNC Grading System</v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-list class="sy-bgcolor">
+        <v-list-item title="1st Semester" subtitle="2024-2025">
+        </v-list-item>
+      </v-list>
       <div class="mr-2">
         <v-menu min-width="200px" rounded>
           <template v-slot:activator="{ props }">
@@ -143,11 +128,7 @@ const logout = () => {
 </script>
 
 <style scoped lang="scss">
-.v-application--is-ltr
-  .v-list--dense.v-list--nav
-  .v-list-group--no-action
-  > .v-list-group__items
-  > .v-list-item {
+.v-application--is-ltr .v-list--dense.v-list--nav .v-list-group--no-action>.v-list-group__items>.v-list-item {
   padding: 0 0 9px 8px;
   color: #fff;
 }
@@ -156,10 +137,12 @@ const logout = () => {
   box-shadow: 1px 0 20px rgba(0, 0, 0, 0.08);
   text-align: center;
   -webkit-box-shadow: 1px 0 20px rgba(0, 0, 0, 0.08);
+
   .v-navigation-drawer__border {
     display: none;
   }
 }
+
 .border {
   margin: 5px 8px 5px 8px;
   border-radius: 10px;
@@ -178,7 +161,13 @@ const logout = () => {
   width: 50%;
   margin: 15px auto;
 }
+
 .rounded-image {
   border-radius: 50%;
+}
+.sy-bgcolor {
+  background-color: transparent;
+  color: white;
+  margin-right: 20px;
 }
 </style>

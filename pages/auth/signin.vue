@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center justify-center px-10" style="height: 100vh">
-    <v-card width="450" class="mx-auto card-border elevation-0 py-10" outlined>
+    <v-card width="450" class="mx-auto card-border elevation-0 pt-10" outlined>
       <div class="hr-sect">
         <v-img
           src="\SNC-Logo.png"
@@ -79,6 +79,8 @@
 				<NuxtLink to="/auth/signup" class="nuxt-link">Create an account</NuxtLink>
 				<v-spacer></v-spacer>
 			</v-card-actions> -->
+
+      <p class="version">v1.0.0.2</p>
     </v-card>
 
     <v-snackbar v-model="snackbar" location="top" color="red" variant="tonal">
@@ -186,5 +188,10 @@ async function login() {
   font-size: 0;
   line-height: 0;
   margin: 0 8px;
+}
+.version {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 15px;
 }
 </style>

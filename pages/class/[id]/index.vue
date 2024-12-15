@@ -158,13 +158,13 @@
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <v-text-field label="Subject Description*" v-model="subjectDesc"
-                  @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined" :rules="rules.subjectDesc"
+                  @input="subjectDesc = subjectDesc.toUpperCase()" readonly variant="outlined" :rules="rules.subjectDesc"
                   required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                <v-text-field label="Units" v-model="units" readonly variant="outlined" :rules="rules.units" type="number"
                   required></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -255,9 +255,9 @@
             <template v-slot:loading2>
               <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
             </template>
-            <template v-slot:[`item.course_code`]="{ item }">
+            <!-- <template v-slot:[`item.course_code`]="{ item }">
               {{ item.course_code }}-{{ item.section }}
-            </template>
+            </template> -->
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip text="Add Student" location="top">
                 <template v-slot:activator="{ props }">
@@ -286,12 +286,14 @@
         </v-toolbar>
         <div class="mx-7 my-4">
           <v-row no-gutters>
-            <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2">Student No.</v-col>
-            <v-col cols="8" class="text-subtitle-2">: {{ studentno }}</v-col>
+            <v-col cols="3" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Student No.</v-col>
+            <v-col cols="1" class="font-weight-bold">:</v-col>
+            <v-col cols="8" class="font-weight-bold">{{ studentno }}</v-col>
           </v-row>
           <v-row no-gutters>
-            <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2">Name</v-col>
-            <v-col cols="8" class="text-subtitle-2">: {{ lastname }}, {{ firstname }} {{ middlename }}</v-col>
+            <v-col cols="3" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Name</v-col>
+            <v-col cols="1" class="font-weight-bold">:</v-col>
+            <v-col cols="8" class="font-weight-bold text-subtitle-3">{{ lastname }}, {{ firstname }} {{ middlename }}</v-col>
           </v-row>
         </div>
         <v-divider></v-divider>
@@ -492,6 +494,10 @@ async function initialize() {
     let result = await $fetch(`/api/class/${route.params.id}`);
 
     if (result) {
+      if (result.length == 0) {
+        isEmpty.value = true;
+        loading.value = false;
+      }
       classDetails.value = result[0];
       subjectCode.value = result[0].subject_code;
       subjectDesc.value = result[0].subject_description;
@@ -505,10 +511,7 @@ async function initialize() {
       timeEnd.value = result[0].time_end;
       loading.value = false;
       loader.value = false;
-      if (result.length == 0) {
-        isEmpty.value = true;
-        loading.value = false;
-      }
+      
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
@@ -654,7 +657,7 @@ async function addStudent(item) {
     semester: classDetails.value?.semester,
     school_year: classDetails.value?.school_year,
     grade: 0,
-    numeric_grade: 0,
+    numeric_grade: "0.00",
     remarks: "",
     teacher_id: classDetails.value?.teacher_id,
   };
