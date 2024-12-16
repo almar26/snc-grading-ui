@@ -80,7 +80,7 @@
 				<v-spacer></v-spacer>
 			</v-card-actions> -->
 
-      <p class="version">v1.0.0.2</p>
+      <p class="version">{{ version }}</p>
     </v-card>
 
     <v-snackbar v-model="snackbar" location="top" color="red" variant="tonal">
@@ -127,6 +127,7 @@ const usernameRules = [
 const passwordRules = [(v) => !!v || "Password is required"];
 const snackbar = ref(false);
 const text = ref("HHHHHH");
+const version = ref("v1.0.0.4")
 
 // FUNCTIONS
 async function login() {
