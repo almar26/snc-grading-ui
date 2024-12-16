@@ -70,7 +70,10 @@
                       {{ item.subject_description }}
                     </div>
                   </v-col>
-                  <v-col cols="12" md="9">
+                  <v-col cols="12" md="2">
+
+                  </v-col>
+                  <v-col cols="12" md="7">
                     <v-table density="compact">
                       <thead>
                         <tr>
@@ -79,8 +82,8 @@
                           </th>
                           <th class="text-left title-table">Semester</th>
                           <th class="text-left title-table">School Year</th>
-                          <th class="text-left title-table">Days</th>
-                          <th class="text-left title-table">Time</th>
+                          <!-- <th class="text-left title-table">Days</th>
+                          <th class="text-left title-table">Time</th> -->
                         </tr>
                       </thead>
                       <tbody>
@@ -90,10 +93,10 @@
                           </td>
                           <td class="value-table">{{ item.semester }}</td>
                           <td class="value-table">{{ item.school_year }}</td>
-                          <td class="value-table">{{ item.days }}</td>
+                          <!-- <td class="value-table">{{ item.days }}</td>
                           <td class="value-table">
                             {{ item.time_start }} - {{ item.time_end }}
-                          </td>
+                          </td> -->
                         </tr>
                       </tbody>
                     </v-table>
@@ -216,8 +219,7 @@
                   required
                 ></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
+              <!-- <v-col cols="12">
                 <v-select
                   color="primary"
                   v-model="semester"
@@ -229,7 +231,6 @@
                 ></v-select>
               </v-col>
               <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <v-text-field
                   label="School Year"
                   v-model="schoolYear"
@@ -237,16 +238,8 @@
                   :rules="rules.schoolYear"
                   required
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <!-- <v-text-field
-                  label="Days"
-                  v-model="days"
-                  variant="outlined"
-                  :rules="rules.days"
-                  required
-                ></v-text-field> -->
+              </v-col> -->
+              <!-- <v-col cols="12">
                 <v-combobox
                   v-model="days"
                   :items="itemDays"
@@ -319,7 +312,7 @@
                     </v-text-field>
                   </v-col>
                 </v-row>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <!-- <small class="text-caption text-medium-emphasis"
@@ -407,7 +400,7 @@ const rules = ref({
 async function initialize() {
   try {
     let result = await $fetch(
-      `/api/class/getClassList?teacher_id=${userData.value.teacher_id}&sy=2024-2025&semester=1st Semester`
+      `/api/class/getClassList?teacher_id=${userData.value.teacher_id}&sy=${schoolYear.value}&semester=${semester.value}`
     );
     if (result) {
       console.log("List: ", result);
@@ -425,6 +418,24 @@ async function initialize() {
     throw err;
   }
 }
+
+
+async function getActiveSchoolyear() {
+  try {
+    let result = await  $fetch("/api/school-year/getActiveSchoolYear");
+
+    if (result) {
+      semester.value = result[0].semester
+      schoolYear.value = result[0].school_year;
+      //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+
 async function showAddCourseDialog() {
   getCoursesList();
   createClassDialog.value = true;
@@ -482,9 +493,9 @@ async function createClass() {
       units: units.value,
       semester: semester.value,
       school_year: schoolYear.value,
-      days: days.value,
-      time_start: timeStart.value,
-      time_end: timeEnd.value,
+      //days: days.value,
+      //time_start: timeStart.value,
+      //time_end: timeEnd.value,
       faculty_no: userData.value.username,
       teacher_name: userData.value.first_name + " " + userData.value.last_name,
     };
@@ -517,7 +528,8 @@ async function classDetails(item) {
 }
 
 onMounted(async () => {
-  initialize();
+  await getActiveSchoolyear();
+  await initialize();
 });
 
 watch([createClassDialog, courseCode, subjectCode], async () => {

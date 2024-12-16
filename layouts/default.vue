@@ -54,7 +54,7 @@
 
       <v-spacer></v-spacer>
       <v-list class="sy-bgcolor">
-        <v-list-item title="1st Semester" subtitle="2024-2025">
+        <v-list-item :title="semester" :subtitle="schoolYear">
         </v-list-item>
       </v-list>
       <div class="mr-2">
@@ -120,11 +120,32 @@ const items = ref([
   { title: "Dashboard", route: "/", icon: "mdi-view-dashboard" },
   { title: "Class", route: "/class", icon: "mdi-account" },
 ]);
+const schoolYear = ref("");
+const semester = ref("");
 
 const logout = () => {
   logUserOut();
   router.push("/auth/signin");
 };
+
+async function initialize() {
+  try {
+    let result = await  $fetch("/api/school-year/getActiveSchoolYear");
+
+    if (result) {
+      semester.value = result[0].semester
+      schoolYear.value = result[0].school_year;
+      //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+onMounted(async () => {
+  await initialize();
+})
 </script>
 
 <style scoped lang="scss">

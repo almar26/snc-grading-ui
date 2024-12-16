@@ -167,25 +167,15 @@
                 <v-text-field label="Units" v-model="units" readonly variant="outlined" :rules="rules.units" type="number"
                   required></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
+              <!-- <v-col cols="12">
                 <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
                   variant="outlined" :rules="rules.semester" label="Semester*" required></v-select>
               </v-col>
               <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <v-text-field label="School Year" v-model="schoolYear" variant="outlined" :rules="rules.schoolYear"
                   required></v-text-field>
               </v-col>
               <v-col cols="12">
-                <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <!-- <v-text-field
-                  label="Days"
-                  v-model="days"
-                  variant="outlined"
-                  :rules="rules.days"
-                  required
-                ></v-text-field> -->
                 <v-combobox v-model="days" :items="itemDays" label="Days" variant="outlined" :rules="rules.days">
                 </v-combobox>
               </v-col>
@@ -212,7 +202,7 @@
                     </v-text-field>
                   </v-col>
                 </v-row>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <!-- <small class="text-caption text-medium-emphasis"
@@ -387,6 +377,8 @@ const courseCode = ref("");
 // const section = ref("");
 const units = ref(0);
 const semester = ref("");
+const activeSemester = ref("");
+const activeSY = ref("")
 const schoolYear = ref("");
 const days = ref("");
 const timeStart = ref(null);
@@ -520,6 +512,22 @@ async function initialize() {
   }
 }
 
+async function getActiveSchoolyear() {
+  try {
+    let result = await  $fetch("/api/school-year/getActiveSchoolYear");
+
+    if (result) {
+      activeSemester.value = result[0].semester
+      activeSY.value = result[0].school_year;
+      //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+
 async function getStudentList() {
   try {
     let result = await $fetch(`/api/student/getStudentList`);
@@ -601,8 +609,8 @@ async function updateClass() {
       course_code: course_code_update,
       section: section.value,
       units: units.value,
-      semester: semester.value,
-      school_year: schoolYear.value,
+      semester: activeSemester.value,
+      school_year: activeSY.value,
       days: days.value,
       time_start: timeStart.value,
       time_end: timeEnd.value,
@@ -909,6 +917,7 @@ watch(
 );
 
 onMounted(async () => {
+  await getActiveSchoolyear();
   await initialize();
   await getStudentSubjectList();
 });
