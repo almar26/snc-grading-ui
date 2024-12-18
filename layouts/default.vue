@@ -26,12 +26,20 @@
               <v-list-item-subtitle>Classes</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="userData.role_view == 'dean'" active-class="border" class="logout-border" to="/teachers">
+          <div v-if="userData.role_view == 'dean'">
+          <v-list-item active-class="border" class="logout-border" to="/teachers">
             <v-list-item-content>
               <v-icon>mdi-account-group</v-icon>
               <v-list-item-subtitle>Teachers</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item active-class="border" class="logout-border" to="/reports">
+            <v-list-item-content>
+              <v-icon>mdi-notebook-multiple</v-icon>
+              <v-list-item-subtitle>Reports</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
         </v-list-item-group>
       </v-list>
 

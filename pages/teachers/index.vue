@@ -149,14 +149,14 @@ const headers = ref([
 
 const rules = ref({
   facultyno: [(v) => !!v || "Faculty no is required"],
-  lastname: [(v) => !!v || "Faculty no is required"],
-  firstname: [(v) => !!v || "Faculty no is required"],
+  lastname: [(v) => !!v || "Lastname is required"],
+  firstname: [(v) => !!v || "Firstname is required"],
   middlename: [(v) => !!v || "Faculty no is required"],
   email: [
-    (v) => !!v || "Faculty no is required",
+    (v) => !!v || "E-mail is required",
     (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
   ],
-  gender: [(v) => !!v || "Faculty no is required"],
+  gender: [(v) => !!v || "Gender is required"],
 });
 
 // DATA
