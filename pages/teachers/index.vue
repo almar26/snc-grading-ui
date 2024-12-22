@@ -174,6 +174,7 @@ const gender = ref("");
 const teachersAccountList = ref([]);
 // Data for updating teacher's account
 const updateTeacherAccountDialog = ref(false);
+const teacherid = ref("");
 const facultyno_update = ref("");
 const lastname_update = ref("");
 const firstname_update = ref("");
@@ -240,6 +241,7 @@ async function createAccount() {
 async function showUpdateTechearAccountDialog(item) {
   console.log("Show Update Teacher Account Dialog", item);
   updateTeacherAccountDialog.value = true;
+  teacherid.value = item.teacher_id
   facultyno_update.value = item.faculty_no
   lastname_update.value = item.last_name
   firstname_update.value = item.first_name
@@ -249,7 +251,17 @@ async function showUpdateTechearAccountDialog(item) {
 }
 
 async function updateTeacherAccount() {
-    console.log("Successfully updated")
+    
+    let payload = {
+      teacher_id: teacherid.value,
+      faculty_no: facultyno_update.value,
+      last_name: lastname_update.value,
+      first_name: firstname_update.value,
+      middle_name: middlename_update.value,
+      email: email_update.value,
+      gender: gender_update.value
+    };
+    console.log("Successfully updated ", payload)
 }
 
 onMounted(async () => {
