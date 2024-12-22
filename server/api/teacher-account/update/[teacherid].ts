@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const myPayload = {
       faculty_no: body.faculty_no,
+      faculty_no_duplicate: body.faculty_no_duplicate,
       last_name: body.last_name,
       first_name: body.first_name,
       middle_name: body.middle_name,

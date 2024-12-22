@@ -357,7 +357,7 @@ const breadcrumbs = ref([
     to: "/",
   },
   {
-    title: "classes",
+    title: "Classes",
     disabled: true,
   },
 ]);

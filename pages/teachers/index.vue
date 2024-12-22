@@ -54,7 +54,8 @@
             </v-tooltip>
             <v-tooltip text="Delete Account" location="top">
               <template v-slot:activator="{ props }">
-                <v-btn size="medium" variant="text" v-bind="props" icon="mdi-delete" color="red" @click="deleteTeacherAccountDialog = true"></v-btn>
+                <v-btn size="medium" variant="text" v-bind="props" icon="mdi-delete" color="red"
+                  @click="deleteTeacherAccountDialog = true"></v-btn>
               </template>
             </v-tooltip>
           </template>
@@ -79,39 +80,44 @@
             <v-row no-gutters>
               <v-col cols="12">
                 <v-text-field variant="outlined" label="Faculty No" v-model="facultyno_update" :rules="rules.facultyno"
-                  @input="facultyno = facultyno.toUpperCase()"></v-text-field>
+                  @input="facultyno_update = facultyno_update.toUpperCase()"></v-text-field>
               </v-col>
               <v-col cols="12"><v-text-field variant="outlined" label="Lastname" v-model="lastname_update"
-                  :rules="rules.lastname" @input="lastname_update  = lastname_update.toUpperCase()"></v-text-field></v-col>
-              <v-col cols="12"><v-text-field variant="outlined" label="Firstname" v-model="firstname_update" :rules="rules.firstname"
-                @input="firstname_update = firstname_update.toUpperCase()"></v-text-field></v-col>
-              <v-col cols="12"><v-text-field variant="outlined" label="Middlename" placeholder="Optional" v-model="middlename_update"
-                @input="middlename_update = middlename_update.toUpperCase()"></v-text-field></v-col>
-              <v-col cols="12"><v-text-field variant="outlined" label="Email" v-model="email_update" :rules="rules.email"></v-text-field></v-col>
+                  :rules="rules.lastname"
+                  @input="lastname_update = lastname_update.toUpperCase()"></v-text-field></v-col>
+              <v-col cols="12"><v-text-field variant="outlined" label="Firstname" v-model="firstname_update"
+                  :rules="rules.firstname"
+                  @input="firstname_update = firstname_update.toUpperCase()"></v-text-field></v-col>
+              <v-col cols="12"><v-text-field variant="outlined" label="Middlename" placeholder="Optional"
+                  v-model="middlename_update"
+                  @input="middlename_update = middlename_update.toUpperCase()"></v-text-field></v-col>
+              <v-col cols="12"><v-text-field variant="outlined" label="Email" v-model="email_update"
+                  :rules="rules.email"></v-text-field></v-col>
               <v-col cols="12">
                 <v-select variant="outlined" label="Gender" :items="['MALE', 'FEMALE']" v-model="gender_update"
-                :rules="rules.gender"></v-select>
+                  :rules="rules.gender"></v-select>
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions class="mx-4">
-          <v-btn color="primary" variant="flat" block @click="updateTeacherAccount()">Update</v-btn>
+          <v-btn color="primary" variant="flat" :loading="loadingUpdateTeacherDetails" block
+            @click="updateTeacherAccount()">Update</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Delete Teacher Account Dialog -->
-     <v-dialog width="auto" v-model="deleteTeacherAccountDialog">
-        <v-card min-width="300" class="py-4 text-center">
-          <v-card-text>
-            <v-icon size="60">mdi-alert</v-icon>
+    <v-dialog width="auto" v-model="deleteTeacherAccountDialog">
+      <v-card min-width="300" class="py-4 text-center">
+        <v-card-text>
+          <v-icon size="60">mdi-alert</v-icon>
           <p class="mt-3">Service Unavailable</p>
-          </v-card-text>
-          
-        </v-card>
-     </v-dialog>
+        </v-card-text>
+
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -174,8 +180,11 @@ const gender = ref("");
 const teachersAccountList = ref([]);
 // Data for updating teacher's account
 const updateTeacherAccountDialog = ref(false);
+const updateTeacherAccountForm = ref(null);
+const loadingUpdateTeacherDetails = ref(false);
 const teacherid = ref("");
 const facultyno_update = ref("");
+const facultyno_duplicate = ref("");
 const lastname_update = ref("");
 const firstname_update = ref("");
 const middlename_update = ref("");
@@ -192,6 +201,7 @@ async function initialize() {
     if (result) {
       teachersAccountList.value = result;
       loadingTable.value = false;
+      console.log(result);
     }
   } catch (er) {
     console.error("Failed to fetch data: ", err);
@@ -243,6 +253,7 @@ async function showUpdateTechearAccountDialog(item) {
   updateTeacherAccountDialog.value = true;
   teacherid.value = item.teacher_id
   facultyno_update.value = item.faculty_no
+  facultyno_duplicate.value = item.faculty_no
   lastname_update.value = item.last_name
   firstname_update.value = item.first_name
   middlename_update.value = item.middle_name
@@ -251,17 +262,43 @@ async function showUpdateTechearAccountDialog(item) {
 }
 
 async function updateTeacherAccount() {
-    
+  const { valid, errors } = await updateTeacherAccountForm.value?.validate();
+  loadingUpdateTeacherDetails.value = true;
+  if (valid) {
     let payload = {
-      teacher_id: teacherid.value,
+      //teacher_id: teacherid.value,
       faculty_no: facultyno_update.value,
+      faculty_no_duplicate: facultyno_duplicate.value,
       last_name: lastname_update.value,
       first_name: firstname_update.value,
       middle_name: middlename_update.value,
       email: email_update.value,
       gender: gender_update.value
     };
-    console.log("Successfully updated ", payload)
+
+    
+    await $fetch(`/api/teacher-account/update/${teacherid.value}`, {
+      method: 'PUT',
+      body: payload,
+    }).then(response => {
+      console.log("Response to update: ", response)
+      if (response.status == "fail") {
+        loadingUpdateTeacherDetails.value = false;
+        toast.error(response.message);
+      } else {
+        updateTeacherAccountDialog.value = false;
+        loadingUpdateTeacherDetails.value = false;
+        updateTeacherAccountForm.value?.reset()
+        toast.success(response.message);
+        initialize();
+        console.log("Successfully updated ", response);
+      }
+    })
+  }
+  else {
+    console.log(errors[0].errorMessages[0]);
+    loadingUpdateTeacherDetails.value = false;
+  }
 }
 
 onMounted(async () => {

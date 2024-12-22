@@ -127,7 +127,7 @@ const usernameRules = [
 const passwordRules = [(v) => !!v || "Password is required"];
 const snackbar = ref(false);
 const text = ref("HHHHHH");
-const version = ref("v1.0.0.4")
+const version = ref("v1.0.0.6")
 
 // FUNCTIONS
 async function login() {
