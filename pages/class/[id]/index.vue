@@ -24,11 +24,13 @@
             <v-toolbar-title class="card-title text-body-1">Details
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn color="warning" icon size="small" variant="text" @click="showUpdateClassDialog()"><v-icon
-                size="large">mdi-pencil</v-icon>
+            <div v-if="finalizeClass == null || finalizeClass == false">
+            <v-btn  color="warning" icon size="small" variant="text"
+              @click="showUpdateClassDialog()"><v-icon size="large">mdi-pencil</v-icon>
               <v-tooltip activator="parent" location="top">Edit</v-tooltip></v-btn>
-            <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
-                size="large">mdi-delete</v-icon><v-tooltip activator="parent" location="top">Delete</v-tooltip></v-btn>
+            <!-- <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
+                size="large">mdi-delete</v-icon><v-tooltip activator="parent" location="top">Delete</v-tooltip></v-btn> -->
+              </div>
           </v-toolbar>
           <v-divider></v-divider>
           <v-list density="compact">
@@ -61,23 +63,29 @@
                 classDetails.units
               }}</v-list-item-title>
             </v-list-item>
-            <v-list-item>
+            <!-- <v-list-item>
               <v-list-item-subtitle class="title">Days</v-list-item-subtitle>
               <v-list-item-title class="desc">{{
-                classDetails.days
+                finalizeClass
               }}</v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-subtitle class="title">Time</v-list-item-subtitle>
               <v-list-item-title class="desc">{{ classDetails.time_start }} -
                 {{ classDetails.time_end }}</v-list-item-title>
-            </v-list-item>
+            </v-list-item> -->
           </v-list>
+
+          <!-- <v-divider></v-divider> -->
+           
+          <!-- <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
+            <v-btn @click="finalizedClassDialog = true" color="green" variant="flat" block>Finalize</v-btn>
+          </v-card-actions> -->
         </v-card>
       </v-col>
       <v-col cols="12" md="9">
         <v-card variant="flat">
-          <v-toolbar color="transparent" class="pr-3" density="comfortable">
+          <v-toolbar color="transparent" class="pr-3" density="comfortable" v-if="finalizeClass == null || finalizeClass == false">
             <v-spacer></v-spacer>
             <v-btn variant="flat" color="primary" class="text-capitalize px-4" @click="addStudentDialog = true">
               <v-icon start>mdi-plus</v-icon>Add Student</v-btn>
@@ -85,7 +93,7 @@
           <v-divider></v-divider>
 
           <v-data-table density="compact" :items="studentSubjectList" :headers="headers" :loading="loading">
-            <template v-slot:[`item.actions`]="{ item }">
+            <template v-slot:[`item.actions`]="{ item }" v-if="finalizeClass == null || finalizeClass == false">
               <v-tooltip text="Input Grade" location="top">
                 <template v-slot:activator="{ props }">
                   <v-btn size="medium" variant="text" v-bind="props" @click="showUpdateGradeDialog(item)"
@@ -158,14 +166,14 @@
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
                 <v-text-field label="Subject Description*" v-model="subjectDesc"
-                  @input="subjectDesc = subjectDesc.toUpperCase()" readonly variant="outlined" :rules="rules.subjectDesc"
-                  required></v-text-field>
+                  @input="subjectDesc = subjectDesc.toUpperCase()" readonly variant="outlined"
+                  :rules="rules.subjectDesc" required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field label="Units" v-model="units" readonly variant="outlined" :rules="rules.units" type="number"
-                  required></v-text-field>
+                <v-text-field label="Units" v-model="units" readonly variant="outlined" :rules="rules.units"
+                  type="number" required></v-text-field>
               </v-col>
               <!-- <v-col cols="12">
                 <v-select color="primary" v-model="semester" :items="['1st Semester', '2nd Semester', 'Summer']"
@@ -283,7 +291,8 @@
           <v-row no-gutters>
             <v-col cols="3" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Name</v-col>
             <v-col cols="1" class="font-weight-bold">:</v-col>
-            <v-col cols="8" class="font-weight-bold text-subtitle-3">{{ lastname }}, {{ firstname }} {{ middlename }}</v-col>
+            <v-col cols="8" class="font-weight-bold text-subtitle-3">{{ lastname }}, {{ firstname }} {{ middlename
+              }}</v-col>
           </v-row>
         </div>
         <v-divider></v-divider>
@@ -342,6 +351,58 @@
         </template>
       </v-card>
     </v-dialog>
+
+     <!-- Finalized Class Dialog -->
+     <v-dialog v-model="finalizedClassDialog" width="auto">
+      <v-card class="text-body-2" color="#4CAF50" max-width="400" prepend-icon="mdi-check-circle"
+        text="Are you sure you want to finalize this class?" :title="`Finalize Class`">
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn class="text-none" :loading="loadingDeleteGrade" text="Finalize" prepend-icon="mdi-check" 
+            variant="tonal" @click="finalizedClass()"></v-btn>
+          <v-btn class="text-none" text="Cancel" prepend-icon="mdi-close" color="red" variant="tonal"
+            @click="finalizedClassDialog = false"></v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
+
+
+    <!-- Add Student Loader Dialog box -->
+    <v-dialog v-model="addStudentLoader" max-width="320" persistent>
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item prepend-icon="mdi-account" title="Adding student...">
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <v-icon color="primary" size="x-large"></v-icon>
+            </div>
+          </template>
+
+          <template v-slot:append>
+            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
+              width="2"></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog>
+
+    <!-- Add Finalize Class Loader Dialog box -->
+    <v-dialog v-model="finalizeLoader" max-width="320" persistent>
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item prepend-icon="mdi-check-circle" title="Finalizing class...">
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <v-icon color="primary" size="x-large"></v-icon>
+            </div>
+          </template>
+
+          <template v-slot:append>
+            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
+              width="2"></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -357,11 +418,14 @@ const toast = useToast();
 const loader = ref(true);
 const loading = ref(true);
 const loading2 = ref(true);
+const addStudentLoader = ref(false)
 const search = ref(null);
 const valid = ref(true);
 // Class Details
 const loadingUpdateClass = ref(false);
 const updateClassDialog = ref(false);
+const finalizedClassDialog = ref(false);
+const finalizeLoader = ref(false);
 const modal_start = ref(null);
 const modal_end = ref(false);
 const updateClassForm = ref(null);
@@ -374,6 +438,7 @@ const addGradeForm = ref(null);
 const subjectCode = ref("");
 const subjectDesc = ref("");
 const courseCode = ref("");
+const finalizeClass = ref(null);
 // const section = ref("");
 const units = ref(0);
 const semester = ref("");
@@ -501,9 +566,10 @@ async function initialize() {
       days.value = result[0].days;
       timeStart.value = result[0].time_start;
       timeEnd.value = result[0].time_end;
+      finalizeClass.value = result[0].finalize;
       loading.value = false;
       loader.value = false;
-      
+
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
@@ -514,7 +580,7 @@ async function initialize() {
 
 async function getActiveSchoolyear() {
   try {
-    let result = await  $fetch("/api/school-year/getActiveSchoolYear");
+    let result = await $fetch("/api/school-year/getActiveSchoolYear");
 
     if (result) {
       activeSemester.value = result[0].semester
@@ -645,6 +711,7 @@ async function getStudentSubjectList() {
     let result = await $fetch(`/api/student-subject/list/${route.params.id}`);
     if (result) {
       studentSubjectList.value = result;
+      addStudentLoader.value = false;
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
@@ -653,6 +720,7 @@ async function getStudentSubjectList() {
 }
 async function addStudent(item) {
   //console.log("Added Student: ", item)
+  addStudentLoader.value = true;
   let payload = {
     class_id: route.params.id,
     student_id: item.documentId,
@@ -679,6 +747,7 @@ async function addStudent(item) {
     } else {
       toast.success("Successfully added.");
       getStudentSubjectList();
+      //addStudentLoader.value = false;
     }
   });
 }
@@ -740,6 +809,7 @@ async function showDeleteGradeDialog(item) {
   studentno.value = item.student_no;
   studentSubjID.value = item.document_id;
 }
+
 async function deleteStudentGrade() {
   try {
     loadingDeleteGrade.value = true;
@@ -759,6 +829,28 @@ async function deleteStudentGrade() {
     throw err;
   }
 }
+
+async function finalizedClass() {
+  finalizeLoader.value = true;
+  let payload = {
+    finalized: true
+  }
+  await $fetch(`/api/class/finalized/${route.params.id}`, {
+    method: "PUT",
+    body: payload
+  }).then(response => {
+    finalizeLoader.value = false;
+    finalizedClassDialog.value = false;
+    toast.success("Class Successfully Finalized!")
+    initialize();
+  })
+  .catch(err => {
+    console.log(err);
+    finalizeLoader.value = false;
+    finalizedClassDialog.value = false;
+  })
+}
+
 
 const numericGrade = computed(() => {
   if (grade.value <= 100 && grade.value >= 98) {
