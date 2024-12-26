@@ -46,7 +46,8 @@ export const useMyAuthStore = defineStore({
         this.errorLogin = false; // set errorLogin state value to false
       } else {
         this.errorLogin = true; // set errorLogin state value to true
-        this.errorMessage = error.value.data.error.message;
+        // this.errorMessage = error.value.data.error.message;
+        this.errorMessage = "Invalid username or password";
         //console.log(data);
         //console.log(error.value.data.error.message);
       }
