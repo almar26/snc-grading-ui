@@ -40,11 +40,13 @@
         ></v-text-field>
         <v-text-field
           v-model="user.password"
+          :append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
           rounded
           :rules="passwordRules"
           variant="outlined"
           label="Password"
-          type="password"
+          :type="showPass ? 'text' : 'password'"
+          @click:append-inner="showPass = !showPass"
           prepend-inner-icon="mdi-lock"
           required
         ></v-text-field>
@@ -115,6 +117,7 @@ const { errorMessage } = storeToRefs(useMyAuthStore()); // make errorMessage sta
 
 const valid = ref(true);
 const loading = ref(false);
+const showPass = ref(false);
 const user = ref({
   identifier: "",
   password: "",
@@ -127,7 +130,7 @@ const usernameRules = [
 const passwordRules = [(v) => !!v || "Password is required"];
 const snackbar = ref(false);
 const text = ref("HHHHHH");
-const version = ref("v1.0.0.7")
+const version = ref("v1.0.0.8")
 
 // FUNCTIONS
 async function login() {

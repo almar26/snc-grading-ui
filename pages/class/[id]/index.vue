@@ -79,7 +79,7 @@
           <!-- <v-divider></v-divider> -->
            
           <!-- <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
-            <v-btn @click="finalizedClassDialog = true" color="green" variant="flat" block>Finalize</v-btn>
+            <v-btn prepend-icon="mdi-check-circle" @click="finalizedClassDialog = true" color="green" variant="flat" block>Finalize</v-btn>
           </v-card-actions> -->
         </v-card>
       </v-col>
@@ -318,12 +318,13 @@
             <v-row>
               <v-col cols="12">
                 <label class="label mb-4" for="email">Other Remarks</label>
-                <v-row>
-                  <v-col cols="4"><v-checkbox v-model="incomplete" color="green" label="Incomplete"
+                <v-row dense>
+                  <v-col cols="12" md="4"><v-checkbox v-model="incomplete" color="green" label="Incomplete"
+                      hide-details></v-checkbox>
+                    </v-col>
+                  <v-col cols="12" md="4"><v-checkbox v-model="fda" color="green" label="Failed due to absences"
                       hide-details></v-checkbox></v-col>
-                  <v-col cols="4"><v-checkbox v-model="fda" color="green" label="Failed due to absences"
-                      hide-details></v-checkbox></v-col>
-                  <v-col cols="4"><v-checkbox v-model="dropped" color="green" label="Dropped"
+                  <v-col cols="12" md="4"><v-checkbox v-model="dropped" color="green" label="Dropped"
                       hide-details></v-checkbox></v-col>
                 </v-row>
               </v-col>
@@ -354,13 +355,13 @@
 
      <!-- Finalized Class Dialog -->
      <v-dialog v-model="finalizedClassDialog" width="auto">
-      <v-card class="text-body-2" color="#4CAF50" max-width="400" prepend-icon="mdi-check-circle"
+      <v-card class="text-body-2" color="#607D8B" max-width="400" prepend-icon="mdi-check-circle"
         text="Are you sure you want to finalize this class?" :title="`Finalize Class`">
         <template v-slot:actions>
           <v-spacer></v-spacer>
-          <v-btn class="text-none" :loading="loadingDeleteGrade" text="Finalize" prepend-icon="mdi-check" 
+          <v-btn class="text-none" rounded :loading="loadingDeleteGrade" text="Finalize" prepend-icon="mdi-check" 
             variant="tonal" @click="finalizedClass()"></v-btn>
-          <v-btn class="text-none" text="Cancel" prepend-icon="mdi-close" color="red" variant="tonal"
+          <v-btn class="text-none" rounded text="Cancel" prepend-icon="mdi-close" color="red" variant="tonal"
             @click="finalizedClassDialog = false"></v-btn>
         </template>
       </v-card>
@@ -553,7 +554,7 @@ async function initialize() {
     if (result) {
       if (result.length == 0) {
         isEmpty.value = true;
-        loading.value = false;
+        //loading.value = false;
       }
       classDetails.value = result[0];
       subjectCode.value = result[0].subject_code;
@@ -567,7 +568,7 @@ async function initialize() {
       timeStart.value = result[0].time_start;
       timeEnd.value = result[0].time_end;
       finalizeClass.value = result[0].finalize;
-      loading.value = false;
+      //loading.value = false;
       loader.value = false;
 
     }
@@ -662,11 +663,11 @@ async function updateClass() {
     if (courseCode.value?.code === undefined) {
       course_code_update = courseCode.value
       subject_code_update = subjectCode.value
-      console.log("course code payload undefined", course_code_update);
+      //console.log("course code payload undefined", course_code_update);
     } else {
       course_code_update = courseCode.value?.code
       subject_code_update = subjectCode.value?.code
-      console.log("course code updated payload undefined", course_code_update);
+      //console.log("course code updated payload undefined", course_code_update);
     }
     const payload = {
       teacher_id: userData.value.teacher_id,
@@ -711,9 +712,11 @@ async function getStudentSubjectList() {
     let result = await $fetch(`/api/student-subject/list/${route.params.id}`);
     if (result) {
       studentSubjectList.value = result;
+      loading.value = false;
       addStudentLoader.value = false;
     }
   } catch (err) {
+    loading.value = false;
     console.error("Failed to fetch data: ", err);
     throw err;
   }
@@ -737,7 +740,7 @@ async function addStudent(item) {
     remarks: "",
     teacher_id: classDetails.value?.teacher_id,
   };
-  console.log("Added Student: ", payload);
+  //console.log("Added Student: ", payload);
   await $fetch("/api/student-subject/createStudentSubject", {
     method: "POST",
     body: payload,
@@ -753,7 +756,7 @@ async function addStudent(item) {
 }
 
 async function showUpdateGradeDialog(item) {
-  console.log("Update Grade: ", item);
+  //console.log("Update Grade: ", item);
   updateGradeDialog.value = true;
   studentSubjID.value = item.document_id;
   studentno.value = item.student_no;
@@ -773,7 +776,7 @@ async function submitGrade() {
   if (valid) {
     loadingAddGrade.value = true;
     if (grade.value === null || grade.value === "") {
-      console.log("Grade is empty");
+      //console.log("Grade is empty");
       grade.value = 0;
     }
     let payload = {
@@ -789,7 +792,7 @@ async function submitGrade() {
       method: "PUT",
       body: payload,
     }).then((response) => {
-      console.log("Grade submitted: ", response);
+      //console.log("Grade submitted: ", response);
       updateGradeDialog.value = false;
       loadingAddGrade.value = false;
       toast.success("Grade successfully updated!");
@@ -805,7 +808,7 @@ async function submitGrade() {
 
 async function showDeleteGradeDialog(item) {
   deleteStudentGradeDialog.value = true;
-  console.log(item);
+  //console.log(item);
   studentno.value = item.student_no;
   studentSubjID.value = item.document_id;
 }
@@ -950,12 +953,12 @@ watch(
     //   grade.value = 0;
     // }
     if (updateGradeDialog.value == true) {
-      console.log("Update Grade Dialog box Opened");
+      //console.log("Update Grade Dialog box Opened");
       // if (remarks.value == "INCOMPLETE") {
       //   incomplete.value = true;
       // }
     } else if (updateGradeDialog.value == false) {
-      console.log("Update Grade Dialog Box Closed!");
+      //console.log("Update Grade Dialog Box Closed!");
       fda.value = false;
       incomplete.value = false;
       dropped.value = false;
@@ -978,15 +981,15 @@ watch(
     ) {
       remarks.value = "";
     }
-    if (updateClassDialog.value === false) {
-      console.log("Create Class dialog box closed");
-      //updateClassForm.value?.reset();
-      initialize();
-    }
+    // if (updateClassDialog.value === false) {
+    //   //console.log("Update Class dialog box closed");
+    //   //updateClassForm.value?.reset();
+    //   //initialize();
+    // }
     if (courseCode.value?.code === undefined) {
-      console.log("course code undefined");
+      //console.log("course code undefined");
     } else {
-      console.log("Course Code Value: ", courseCode.value);
+      //console.log("Course Code Value: ", courseCode.value);
       getSubjectsByCourse(courseCode.value?.code);
       if (subjectCode.value) {
         //console.log("Subject: ", subjectCode.value);
