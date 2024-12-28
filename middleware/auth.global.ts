@@ -52,6 +52,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (user_info.user.role_view === "teacher" && to.path === "/teachers") {
       return navigateTo("/");
     }
+    if (user_info.user.role_view === "teacher" && to.path === "/reports") {
+      return navigateTo("/");
+    }
 
     //console.log("Basic Account");
   }

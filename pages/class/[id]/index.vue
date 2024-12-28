@@ -747,6 +747,7 @@ async function addStudent(item) {
   }).then((response) => {
     if (response.status == "fail") {
       toast.error(response.message);
+      addStudentLoader.value = false;
     } else {
       toast.success("Successfully added.");
       getStudentSubjectList();
