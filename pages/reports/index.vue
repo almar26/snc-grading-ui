@@ -62,7 +62,7 @@
     </v-dialog>
 
     <!-- Student Report Card Generated Dialog Box-->
-    <v-dialog v-model="generatedReportCardDialog" max-width="850" scrollable>
+    <v-dialog v-model="generatedReportCardDialog" max-width="850" scrollable persistent>
       <v-card elevation="0">
         <v-toolbar color="primary" density="compact">
           <v-icon class="ml-4">mdi-notebook</v-icon>
@@ -88,17 +88,27 @@
                     middlename
                   }}</v-col>
               </v-row>
+              <v-row no-gutters>
+                <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Course</v-col>
+                <v-col cols="1" class="font-weight-bold">:</v-col>
+                <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ course }}</v-col>
+              </v-row>
+              <v-row no-gutters v-if="major != ''">
+                <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Major</v-col>
+                <v-col cols="1" class="font-weight-bold">:</v-col>
+                <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ major }}</v-col>
+              </v-row>
             </v-col>
             <v-col cols="12" md="6">
               <v-row no-gutters>
-                <v-col cols="3" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Course</v-col>
+                <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">School Year</v-col>
                 <v-col cols="1" class="font-weight-bold">:</v-col>
-                <v-col cols="8" class="font-weight-bold text-subtitle-2">{{ course }}</v-col>
+                <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ schoolYear }}</v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="3" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Major</v-col>
+                <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Semester</v-col>
                 <v-col cols="1" class="font-weight-bold">:</v-col>
-                <v-col cols="8" class="font-weight-bold text-subtitle-2">{{ major }}</v-col>
+                <v-col cols="7" class="font-weight-bold text-subtitle-2 text-uppercase">{{ semester }}</v-col>
               </v-row>
 
             </v-col>
@@ -113,18 +123,35 @@
         <v-divider></v-divider>
         <v-data-table :headers="reportHeaders" :items="gradesResult">
           <template v-slot:[`item.section`]="{ item }">
-           {{ item.course_code }}-{{ item.section }}
+            {{ item.course_code }}-{{ item.section }}
           </template>
 
-            <template v-slot:[`item.teachers`]="{ item }">
-              <v-tooltip text="Show Teacher" location="top">
-              <template v-slot:activator="{ props }">
-                <v-btn size="small" class="mr-2" variant="outlined" v-bind="props"
-                  @click="showTeacher(item.teacher_id)" color="info">
-                <v-icon>mdi-account</v-icon></v-btn>
+          <template v-slot:[`item.teachers`]="{ item }">
+            <v-menu location="top">
+              <template v-slot:activator="{ props: menu }">
+                <v-tooltip text="Show Teacher" location="top">
+                  <template v-slot:activator="{ props: tooltip }">
+                    <v-btn size="small" class="mr-2" variant="outlined" v-bind="mergeProps(menu, tooltip)"
+                      @click="showTeacher(item.teacher_id)" color="info">
+                      <v-icon>mdi-account</v-icon></v-btn>
+                  </template>
+                </v-tooltip>
               </template>
-            </v-tooltip>
-            </template>
+              <v-card>
+                <v-card-text>
+                  <div class="mx-auto text-center">
+                    <v-avatar color="green">
+                      <v-icon icon="mdi-account-circle"></v-icon>
+                    </v-avatar>
+                    <h3 class="mt-2 text-caption">{{ item.teacher_details.faculty_no }}</h3>
+                    <h4 class="mt-1">{{ item.teacher_details.first_name }} {{ item.teacher_details.last_name }}</h4>
+                    <p class="text-caption mt-1">Department: {{ item.teacher_details.department }}</p>
+                   
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-menu>
+          </template>
         </v-data-table>
 
       </v-card>
@@ -139,6 +166,7 @@
 import { storeToRefs } from "pinia";
 import { useMyAuthStore } from "~/stores/auth";
 import { useToast } from "vue-toastification";
+import { mergeProps } from "vue";
 const { userInfo } = storeToRefs(useMyAuthStore());
 const userData = ref(userInfo?.value.user);
 useHead({
@@ -180,7 +208,9 @@ const reportHeaders = ref([
 
 ])
 const toast = useToast();
+const menu = ref(false)
 const search = ref(null)
+const loadingTable = ref(true)
 const loaderIcon = ref("");
 const loaderTitle = ref("");
 const showResult = ref(false)
@@ -196,18 +226,21 @@ const middlename = ref("");
 const course = ref("");
 const major = ref("")
 const gradesResult = ref([])
-
+const semester = ref("");
+const schoolYear = ref("");
 
 async function searchStudent() {
   console.log("search student")
   loaderIcon.value = "mdi-magnify"
   loaderTitle.value = "Searching..."
   generateReportLoader.value = true
+  getActiveSchoolyear()
   try {
     if (searchRecord.value == "") {
       console.log("Empty search bar")
       searchResult.value = []
       generateReportLoader.value = false
+      loadingTable.value = false
     } else {
       let result = await $fetch(`/api/student/search?searchid=${searchRecord.value}`);
       if (result) {
@@ -215,11 +248,14 @@ async function searchStudent() {
         searchResult.value = result
         showResult.value = true
         generateReportLoader.value = false
+        loadingTable.value = false
+
       }
     }
 
   } catch (err) {
     generateReportLoader.value = false
+    loadingTable.value = false
     console.error("Failed to fetch data: ", err);
     throw err;
   }
@@ -232,13 +268,27 @@ async function generateReport(item) {
   lastname.value = item.last_name
   firstname.value = item.first_name
   middlename.value = item.middle_name
-  course.value = item.course
+  course.value = item.course_code
   major.value = item.major
   loaderIcon.value = "mdi-notebook"
   loaderTitle.value = "Generating report..."
   generateReportLoader.value = true
   showGeneratedReport()
 
+}
+async function getActiveSchoolyear() {
+  try {
+    let result = await $fetch("/api/school-year/getActiveSchoolYear");
+
+    if (result) {
+      semester.value = result[0].semester
+      schoolYear.value = result[0].school_year;
+      //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
 }
 
 async function showGeneratedReport() {
@@ -249,7 +299,8 @@ async function showGeneratedReport() {
   // }, 3000)
 
   try {
-    let result = await $fetch(`/api/student-subject/show-grades/${studentid.value}`)
+    // let result = await $fetch(`/api/student-subject/show-grades/${studentid.value}`)
+    let result = await $fetch(`/api/student-subject/getGrades?student_id=${studentid.value}&sy=${schoolYear.value}&semester=${semester.value}`)
     if (result) {
       gradesResult.value = result;
       generateReportLoader.value = false
