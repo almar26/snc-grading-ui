@@ -35,7 +35,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
 
   if (token.value && user_info.user.role_view === "dean") {
-    console.log("Dean Account");
+    //console.log("Dean Account");
     // if (token.value && to.path !== "/dean") {
     //   return navigateTo("/dean");
     // }
@@ -43,7 +43,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return navigateTo("/");
     }
   } else if (token.value && user_info.user.role_view === "teacher") {
-    console.log("Teacher Account");
+    //console.log("Teacher Account");
 
     if (to.meta.layout === "dean" || to.meta.layout === "auth") {
       return navigateTo("/");

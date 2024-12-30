@@ -7,10 +7,11 @@
         <div class="service-notif mt-5">Service Unavailable</div>
       </v-card>
     </div> -->
+  
     <v-row justify="center">
       <v-col cols="12" md="5">
         <v-form ref="searchForm" v-model="search" @submit.prevent="searchStudent">
-          <v-text-field variant="solo-filled" clearable v-model="searchRecord" label="Search"
+          <v-text-field variant="solo-filled" clearable v-model="searchRecord" placeholder="Search.."
             append-inner-icon="mdi-magnify" @click:append-inner="searchStudent" rounded hide-details single-line
             flat></v-text-field>
         </v-form>
@@ -93,11 +94,13 @@
                 <v-col cols="1" class="font-weight-bold">:</v-col>
                 <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ course }}</v-col>
               </v-row>
-              <v-row no-gutters v-if="major != ''">
-                <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Major</v-col>
-                <v-col cols="1" class="font-weight-bold">:</v-col>
-                <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ major }}</v-col>
-              </v-row>
+              <!-- <div v-if="major != null || major != ''">
+                <v-row no-gutters>
+                  <v-col cols="4" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Major</v-col>
+                  <v-col cols="1" class="font-weight-bold">:</v-col>
+                  <v-col cols="7" class="font-weight-bold text-subtitle-2">{{ major }}</v-col>
+                </v-row>
+              </div> -->
             </v-col>
             <v-col cols="12" md="6">
               <v-row no-gutters>
@@ -116,9 +119,12 @@
         </div>
         <v-divider></v-divider>
         <div class="d-flex align-center justify-center">
-          <v-btn prepend-icon="mdi-printer" variant="outlined" color="green" class="text-capitalize my-4">
+          <!-- <v-btn prepend-icon="mdi-printer" variant="outlined" color="green" @click="generatePDF"
+            class="text-capitalize my-4">
             Print
-          </v-btn>
+          </v-btn> -->
+          <PrintGrades :studentid="studentid" :studentDetails="studentDetails" :gradeResult="gradesResult" :schoolYear="schoolYear" :semester="semester"/>
+          <!-- <PrintSample /> -->
         </div>
         <v-divider></v-divider>
         <v-data-table :headers="reportHeaders" :items="gradesResult">
@@ -146,7 +152,7 @@
                     <h3 class="mt-2 text-caption">{{ item.teacher_details.faculty_no }}</h3>
                     <h4 class="mt-1">{{ item.teacher_details.first_name }} {{ item.teacher_details.last_name }}</h4>
                     <p class="text-caption mt-1">Department: {{ item.teacher_details.department }}</p>
-                   
+
                   </div>
                 </v-card-text>
               </v-card>
@@ -158,11 +164,18 @@
     </v-dialog>
 
     <!-- DIALOG BOX END -->
+<!-- 
+    <div id="content">
+      <h1>JSPDF Content</h1>
+    </div>
+    <button onclick="javascript:generatePDF();">PDF</button> -->
 
   </div>
 </template>
 
 <script setup>
+import $ from 'jquery'
+import { jsPDF } from 'jspdf';
 import { storeToRefs } from "pinia";
 import { useMyAuthStore } from "~/stores/auth";
 import { useToast } from "vue-toastification";
@@ -218,6 +231,7 @@ const searchRecord = ref("");
 const searchResult = ref([])
 const generateReportLoader = ref(false);
 const generatedReportCardDialog = ref(false);
+const studentDetails = ref({})
 const studentid = ref("");
 const studentno = ref("");
 const lastname = ref("");
@@ -263,6 +277,7 @@ async function searchStudent() {
 
 async function generateReport(item) {
   console.log(item)
+  studentDetails.value = item;
   studentid.value = item.documentId
   studentno.value = item.student_no
   lastname.value = item.last_name
