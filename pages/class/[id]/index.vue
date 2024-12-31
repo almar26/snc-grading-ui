@@ -78,9 +78,9 @@
 
           <!-- <v-divider></v-divider> -->
            
-          <!-- <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
+          <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
             <v-btn prepend-icon="mdi-check-circle" @click="finalizedClassDialog = true" color="green" variant="flat" block>Finalize</v-btn>
-          </v-card-actions> -->
+          </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="9">

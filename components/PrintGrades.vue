@@ -35,79 +35,91 @@ async function generatePDF() {
   var img = new Image();
   img.src = '/SNC-Logo.png';
 
-  pdf.addImage(img, 'png', 15, 7, 22, 22);
+  pdf.addImage(img, 'png', 15, 4, 22, 22);
   var pageHeight = pdf.internal.pageSize.height || pdf.internal.pageSize.getHeight();
   var pageWidth = pdf.internal.pageSize.width || pdf.internal.pageSize.getWidth();
 
+  // Set watermark style
+  // pdf.setFontSize(50);
+  // pdf.setFont(undefined, 'bold');
+  // pdf.setTextColor(224, 224, 224); // Light gray color
+  // pdf.text("COPY OF GRADES", pageWidth / 2, 130, {
+  //   angle: 45, // Rotate the watermark
+  //   align: "center",
+  // });
+  pdf.setGState(new pdf.GState({ opacity: 0.15 }));
+  pdf.addImage(img, "PNG", 55, 40, 100, 100, undefined, "SLOW")
+
+  pdf.setGState(new pdf.GState({ opacity: 1 }));
+  pdf.setTextColor(0, 0, 0);
   pdf.setFontSize(12);
   pdf.setFont(undefined, 'bold');
-  pdf.text("ST. NICOLAS COLLEGE OF BUSINESS AND TECHNOLOGY", pageWidth / 2, 15, { align: 'center' });
+  pdf.text("ST. NICOLAS COLLEGE OF BUSINESS AND TECHNOLOGY", pageWidth / 2, 12, { align: 'center' });
 
   const text = "Mel-Vi Bldg., JASA Road, Dolores, City of San Fernando, Pampanga";
   const maxWidth = 80; // Maximum width of the text
   const lines = pdf.splitTextToSize(text, maxWidth);
   pdf.setFont(undefined, 'normal');
-  pdf.text(lines, pageWidth / 2, 20, { align: 'center' })
+  pdf.text(lines, pageWidth / 2, 17, { align: 'center' })
 
   // Add a line
   pdf.setLineWidth(0.5)
-  pdf.line(0, 33, 210, 33)
+  pdf.line(0, 29, 210, 29)
 
   // TITLE
-  pdf.setFontSize(12);
+  pdf.setFontSize(14);
+  //pdf.setTextColor(76, 175, 80);
   pdf.setFont(undefined, 'bold');
-  pdf.text("REPORT CARD", pageWidth / 2, 42, { align: 'center' })
+  pdf.text("COPY OF GRADES", pageWidth / 2, 36, { align: 'center' })
 
   // Add Student Information
   // student label
   pdf.setFontSize(9);
+  pdf.setTextColor(0, 0, 0);
   pdf.setFont(undefined, 'bold');
   // Student No.
-  pdf.text("STUDENT NO", 15, 50)
-  pdf.text(":", 42, 50)
+  pdf.text("STUDENT NO", 15, 45)
+  pdf.text(":", 42, 45)
   // Lastname
-  pdf.text("LASTNAME", 15, 56)
-  pdf.text(":", 42, 56)
+  pdf.text("LASTNAME", 15, 50)
+  pdf.text(":", 42, 50)
   // Firstname
-  pdf.text("FIRSTNAME", 15, 62)
-  pdf.text(":", 42, 62)
+  pdf.text("FIRSTNAME", 15, 55)
+  pdf.text(":", 42, 55)
   // Middlename
-  pdf.text("MIDDLENAME", 15, 68)
-  pdf.text(":", 42, 68)
+  pdf.text("MIDDLENAME", 15, 60)
+  pdf.text(":", 42, 60)
   // Course
-  pdf.text("COURSE", 120, 50)
-  pdf.text(":", 145, 50)
+  pdf.text("COURSE", 120, 45)
+  pdf.text(":", 145, 45)
   // Major
   // pdf.text("MAJOR", 100, 48)
   // pdf.text(":", 125, 48)
   // School Year
-  pdf.text("SCHOOL YEAR", 120, 56)
-  pdf.text(":", 145, 56)
+  pdf.text("SCHOOL YEAR", 120, 50)
+  pdf.text(":", 145, 50)
   // Semester
-  pdf.text("SEMESTER", 120, 62)
-  pdf.text(":", 145, 62)
+  pdf.text("SEMESTER", 120, 55)
+  pdf.text(":", 145, 55)
 
   // Student Info Data
   pdf.setFont(undefined, 'normal');
-  pdf.text(props.studentDetails.student_no, 47, 50)
-  pdf.text(props.studentDetails.last_name, 47, 56)
-  pdf.text(props.studentDetails.first_name, 47, 62)
-  pdf.text(props.studentDetails.middle_name, 47, 68)
-  pdf.text(props.studentDetails.course_code, 150, 50)
-  pdf.text(props.schoolYear, 150, 56)
+  pdf.text(props.studentDetails.student_no, 47, 45)
+  pdf.text(props.studentDetails.last_name, 47, 50)
+  pdf.text(props.studentDetails.first_name, 47, 55)
+  pdf.text(props.studentDetails.middle_name, 47, 60)
+  pdf.text(props.studentDetails.course_code, 150, 45)
+  pdf.text(props.schoolYear, 150, 50)
   let semesterText = props.semester
   let upperSemester = props.semester.toUpperCase();
-  pdf.text(upperSemester, 150, 62)
+  pdf.text(upperSemester, 150, 55)
 
   // Footer
-  pdf.text("SNC Grading System", pageWidth / 2, pageHeight  - 10, { align: 'center' });
+  // pdf.text("SNC Grading System", pageWidth / 2, pageHeight - 10, { align: 'center' });
 
-  // Add a line
-  // pdf.setLineWidth(0.8)
-  // pdf.setLineDashPattern([3, 3, 1, 3], 10)
-  // pdf.line(15, 75, 196, 75)
 
-  pdf.setLineDashPattern(0)
+
+  //pdf.setLineDashPattern(0)
   const columns = [
     { header: 'Code', dataKey: 'subject_code' },
     { header: 'Description', dataKey: 'title' },
@@ -117,20 +129,58 @@ async function generatePDF() {
     { header: 'Remarks', dataKey: 'remarks' },
   ];
   const data = props.gradeResult;
+  console.log("Grade Result: ", data);
 
   // pdf.setY(30);
   // Add table to the PDF
   pdf.autoTable(
     {
-      startY: 75,
+      startY: 64,
       columns,
       body: data,
-      theme: 'grid'
+      theme: 'grid',
+      didDrawPage: function (data) {
+        if (data.table.body.length === 0) {
+          pdf.setFontSize(12);
+          pdf.text("No Data Available", 105, 80, null, null, "center");
+        }
+      },
+      styles: {
+        halign: "center",
+        textColor: [0, 0, 0], // RGB color for text
+        font: 'helvetica',
+        fontSize: 8,
+        //fillColor: null,
+      },
+      headStyles: {
+        fillColor: [76, 175, 80], // RGB color for header background
+        textColor: [255, 255, 255], // RGB color for header text
+        fontSize: 9,
+        fontStyle: 'bold',
+      },
+      // alternateRowStyles: {
+      //   fillColor: [220, 220, 220], // Light gray for alternate rows
+      // },
+      // columnStyles: {
+      //   0: { halign: "left" }, // Center-align text in the first column
+      //   1: { halign: "left" }, // Center-align text in the second column
+      // },
     });
+
+
+
+  const finalY = pdf.lastAutoTable.finalY;
+  //pdf.text("Second line of text", 10, finalY + 10);
+
+  // Add a seperation line
+  // pdf.setLineWidth(0.4)
+  // pdf.setDrawColor(160, 160, 160)
+  // pdf.setLineDashPattern([3, 3, 1, 3], 10)
+  // pdf.line(0, pageHeight / 2, 210, pageHeight / 2)
 
   pdf.autoPrint();
   var w = 600;
-  var h = 300;
+  var h = 600;
   var left = (window.innerWidth / 2) - (w / 2);
   var top = (window.innerHeight / 2) - (h / 2);
   window.open(pdf.output('bloburl'), '_blank', 'modal,location=no,menubar=no, scrollbars=no,titlebar=no,toolbar=no,top=' + top + ',left=' + left + ',width=' + w + ',height=' + h + '');

@@ -7,13 +7,13 @@
         <div class="service-notif mt-5">Service Unavailable</div>
       </v-card>
     </div> -->
-  
+
     <v-row justify="center">
       <v-col cols="12" md="5">
         <v-form ref="searchForm" v-model="search" @submit.prevent="searchStudent">
           <v-text-field variant="solo-filled" clearable v-model="searchRecord" placeholder="Search.."
-            append-inner-icon="mdi-magnify" @click:append-inner="searchStudent" rounded hide-details single-line
-            flat></v-text-field>
+            hint="Search by Student No, Lastname or Firstname" append-inner-icon="mdi-magnify"
+            @click:append-inner="searchStudent" rounded single-line flat></v-text-field>
         </v-form>
       </v-col>
     </v-row>
@@ -123,7 +123,8 @@
             class="text-capitalize my-4">
             Print
           </v-btn> -->
-          <PrintGrades :studentid="studentid" :studentDetails="studentDetails" :gradeResult="gradesResult" :schoolYear="schoolYear" :semester="semester"/>
+          <PrintGrades :studentid="studentid" :studentDetails="studentDetails" :gradeResult="gradesResult"
+            :schoolYear="schoolYear" :semester="semester" />
           <!-- <PrintSample /> -->
         </div>
         <v-divider></v-divider>
@@ -164,7 +165,7 @@
     </v-dialog>
 
     <!-- DIALOG BOX END -->
-<!-- 
+    <!-- 
     <div id="content">
       <h1>JSPDF Content</h1>
     </div>

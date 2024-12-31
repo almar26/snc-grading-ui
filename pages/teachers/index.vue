@@ -45,6 +45,9 @@
           <template v-slot:loadingTable>
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
           </template>
+          <template v-slot:[`item.classes`]="{ item }">
+            <v-btn variant="tonal" color="blue" :to="`/teachers/classes/${item.teacher_id}`">View</v-btn>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-tooltip text="Edit Account" location="top">
               <template v-slot:activator="{ props }">
@@ -150,6 +153,7 @@ const headers = ref([
   { title: "Middlename", sortable: false, key: "middle_name" },
   { title: "Email", sortable: false, key: "email" },
   { title: "Gender", sortable: false, key: "gender" },
+  { title: "Classes", sortable: false, key: "classes" },
   { title: "", sortable: false, key: "actions" },
 ]);
 
