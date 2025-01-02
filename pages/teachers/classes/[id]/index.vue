@@ -70,7 +70,7 @@
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip text="View Class" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn size="medium" variant="text" v-bind="props"
+                  <v-btn size="medium" variant="text" v-bind="props" @click="openViewClassDialog(item)"
                     color="primary">
                     <v-icon size="25">mdi-open-in-new</v-icon>
                   </v-btn>
@@ -83,6 +83,7 @@
       </v-col>
     </v-row>
 
+    <!-- DIALOG BOX -->
     <!-- Loader Dialog box -->
     <v-dialog v-model="loaderDialog" max-width="320" persistent>
       <v-list class="py-2" color="primary" elevation="12" rounded="lg">
@@ -99,6 +100,36 @@
           </template>
         </v-list-item>
       </v-list>
+    </v-dialog>
+
+    <v-dialog v-model="vieClassDialog" max-width="900" persistent>
+      <v-card elevation="0">
+        <v-toolbar color="primary" density="compact">
+          <v-icon class="ml-4">mdi-text-box-check</v-icon>
+          <v-toolbar-title> {{ subjectCode }} Class</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="vieClassDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <div class="mx-7 my-4">
+          <v-row no-gutters>
+            <v-col cols="2" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Subject</v-col>
+            <v-col cols="1" class="font-weight-bold">:</v-col>
+            <v-col cols="9" class="font-weight-bold">{{ subjectCode }}-{{ subjectDesc }}</v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="2" class="text-uppercase font-weight-bold text-subtitle-2 text-green">Section</v-col>
+            <v-col cols="1" class="font-weight-bold">:</v-col>
+            <v-col cols="9" class="font-weight-bold text-subtitle-3">{{ courseCode }}-{{ section }}</v-col>
+          </v-row>
+        </div>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-data-table density="compact" :items="studentSubjectList" :headers="classHeaders" :loading="loading2">            
+          </v-data-table>
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -144,14 +175,40 @@ const headers = ref([
   { title: "Status", key: "status", sortable: false },
   { title: "", key: "actions", align: "end", sortable: false },
 ]);
+const classHeaders = ref([
+  {
+    title: "Student No",
+    sortable: true,
+    key: "student_no",
+  },
+  { title: "Lastname", key: "last_name", sortable: false },
+  { title: "Firstname", key: "first_name", sortable: false },
+  { title: "Middlename", key: "middle_name", sortable: false },
+  // { title: "Course", key: "course_code", sortable: false },
+  // { title: "Semester", key: "semester", sortable: false },
+  // { title: "School Year", key: "school_year", sortable: false },
+  { title: "Grade", key: "grade", sortable: false },
+  { title: "Numeric", key: "numeric_grade", sortable: false },
+  { title: "Remarks", key: "remarks", sortable: false },
+  
+]);
+
 const isEmpty = ref(false);
-const loading = ref(true)
+const loading = ref(true);
+const loading2 = ref(true);
 const loaderDialog = ref(false);
 const loader = ref(true);
 const teacherDetails = ref({})
 const classList = ref([]);
 const semester = ref("");
 const schoolYear = ref("");
+const vieClassDialog = ref(false);
+const classid = ref("");
+const subjectCode = ref("");
+const subjectDesc = ref("");
+const courseCode = ref("");
+const section = ref("");
+const studentSubjectList = ref([]);
 
 
 async function initialize() {
@@ -202,6 +259,33 @@ async function getFacultyClasses() {
       loading.value = false;
     }
   } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+// Open View Class Dialog
+async function openViewClassDialog(item) {
+  console.log(item)
+  classid.value = item.documentId;
+  subjectCode.value = item.subject_code;
+  subjectDesc.value = item.subject_description;
+  courseCode.value = item.course_code;
+  section.value = item.section;
+  vieClassDialog.value = true
+  getStudentSubjectList();
+}
+
+async function getStudentSubjectList() {
+  try {
+    let result = await $fetch(`/api/student-subject/list/${classid.value}`);
+    if (result) {
+      studentSubjectList.value = result;
+      loading2.value = false;
+      //addStudentLoader.value = false;
+    }
+  } catch (err) {
+    loading.value = false;
     console.error("Failed to fetch data: ", err);
     throw err;
   }
