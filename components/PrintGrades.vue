@@ -106,7 +106,7 @@ async function generatePDF() {
   pdf.setFont(undefined, 'normal');
 
   let middlename = props.studentDetails.middle_name;
-  if (middlename == "") {
+  if (middlename == null || middlename == "") {
     console.log("No Middle name")
     pdf.text(props.studentDetails.student_no, 47, 45)
     pdf.text(props.studentDetails.last_name, 47, 50)
