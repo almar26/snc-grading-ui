@@ -104,15 +104,33 @@ async function generatePDF() {
 
   // Student Info Data
   pdf.setFont(undefined, 'normal');
-  pdf.text(props.studentDetails.student_no, 47, 45)
-  pdf.text(props.studentDetails.last_name, 47, 50)
-  pdf.text(props.studentDetails.first_name, 47, 55)
-  pdf.text(props.studentDetails.middle_name, 47, 60)
-  pdf.text(props.studentDetails.course_code, 150, 45)
-  pdf.text(props.schoolYear, 150, 50)
-  let semesterText = props.semester
-  let upperSemester = props.semester.toUpperCase();
-  pdf.text(upperSemester, 150, 55)
+
+  let middlename = props.studentDetails.middle_name;
+  if (middlename == "") {
+    console.log("No Middle name")
+    pdf.text(props.studentDetails.student_no, 47, 45)
+    pdf.text(props.studentDetails.last_name, 47, 50)
+    pdf.text(props.studentDetails.first_name, 47, 55)
+    //pdf.text(props.studentDetails.middle_name, 47, 60)
+    pdf.text(props.studentDetails.course_code, 150, 45)
+    pdf.text(props.schoolYear, 150, 50)
+    let semesterText = props.semester
+    let upperSemester = props.semester.toUpperCase();
+    pdf.text(upperSemester, 150, 55)
+  } else {
+    console.log("Middlename exist: ", middlename)
+    pdf.text(props.studentDetails.student_no, 47, 45)
+    pdf.text(props.studentDetails.last_name, 47, 50)
+    pdf.text(props.studentDetails.first_name, 47, 55)
+    pdf.text(props.studentDetails.middle_name, 47, 60)
+    pdf.text(props.studentDetails.course_code, 150, 45)
+    pdf.text(props.schoolYear, 150, 50)
+    let semesterText = props.semester
+    let upperSemester = props.semester.toUpperCase();
+    pdf.text(upperSemester, 150, 55)
+  }
+  
+
 
   // Footer
   // pdf.text("SNC Grading System", pageWidth / 2, pageHeight - 10, { align: 'center' });
