@@ -43,7 +43,7 @@
         >
         </v-skeleton-loader>
         <v-card elevation="0" color="transparent" v-else>
-          <v-toolbar elevation="0" dense color="transparent">
+          <!-- <v-toolbar elevation="0" dense color="transparent">
             <v-btn
               class="mb-3 text-capitalize"
               variant="flat"
@@ -53,7 +53,7 @@
               >Create Class</v-btn
             >
             <v-spacer></v-spacer>
-          </v-toolbar>
+          </v-toolbar> -->
 
           <v-row no-gutters>
             <v-col cols="12" v-for="item in classList" :key="item.id">
