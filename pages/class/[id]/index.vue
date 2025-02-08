@@ -288,22 +288,36 @@
         </v-toolbar>
 
         <v-card-text>
-          <v-data-iterator :items="classStudentList" item-value="id">
+          <div class="d-flex align-center justify-center" style="height: 30vh" v-if="loaderImport">
+            <v-card class="elevation-0 text-center py-16" color="transparent">
+              <v-progress-circular :size="70" :width="7" indeterminate></v-progress-circular>
+              <div class="service-notif mt-5">Loading....</div>
+            </v-card>
+          </div>
+          <v-data-iterator :items="classStudentList" item-value="id" v-else>
             <template v-slot:default="{ items, isExpanded, toggleExpand }">
               <v-row>
                 <v-col v-for="item in items" :key="item.raw.id" cols="12">
                   <v-card variant="flat">
-                    <v-card-title class="d-flex align-center">
+                    <!-- <v-card-title class="d-flex align-center">
                       <h5>{{ item.raw.subject_code }} - {{ item.raw.subject_description }}</h5>
                       <v-spacer></v-spacer><v-btn variant="flat" color="primary" class="text-capitalize"
                         @click="importStudents(item.raw.student_list)"><v-icon start>mdi-import</v-icon> Import</v-btn>
-                    </v-card-title>
+                    </v-card-title> -->
+                    <v-toolbar color="transparent" density="compact">
+                      <v-toolbar-title>
+                        <h5>{{ item.raw.subject_code }} - {{ item.raw.subject_description }}</h5>
 
-                    <v-card-text>
+                      </v-toolbar-title>
+                      <v-spacer></v-spacer>
+                      <v-btn variant="flat" color="primary" class="text-capitalize"
+                        @click="importStudents(item.raw.student_list)"><v-icon start>mdi-import</v-icon> Import</v-btn>
+                    </v-toolbar>
+                    <div class="pl-5">
                       <h4>{{ item.raw.course_code }}-{{ item.raw.section }}</h4>
-                    </v-card-text>
-
-                    <div class="px-4">
+                    </div>
+                   
+                    <div class="px-4 pt-7">
                       <v-switch color="primary" :label="`${isExpanded(item) ? 'Hide' : 'Show'} students`"
                         :model-value="isExpanded(item)" density="compact" inset
                         @click="() => toggleExpand(item)"></v-switch>
@@ -465,8 +479,8 @@
       </v-list>
     </v-dialog>
 
-     <!-- Import Students Loader Dialog box -->
-     <v-dialog v-model="importStudentLoader" max-width="320" persistent>
+    <!-- Import Students Loader Dialog box -->
+    <v-dialog v-model="importStudentLoader" max-width="320" persistent>
       <v-list class="py-2" color="primary" elevation="12" rounded="lg">
         <v-list-item prepend-icon="mdi-import" title="Importing students...">
           <template v-slot:prepend>
@@ -496,6 +510,7 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 const loader = ref(true);
+const loaderImport = ref(true)
 const loading = ref(true);
 const loading2 = ref(true);
 const addStudentLoader = ref(false)
@@ -960,10 +975,12 @@ async function getClassStudents(ctx) {
 
     if (result) {
       //console.log("Classes List: ", result);
+      loaderImport.value = false;
       classStudentList.value = result;
       loading2.value = false;
     }
   } catch (err) {
+    loaderImport.value = false
     console.error("Failed to fetch data: ", err);
     throw err;
   }
