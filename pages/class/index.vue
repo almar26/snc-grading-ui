@@ -1,31 +1,15 @@
 <template>
   <div>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
     <v-row v-if="noData">
       <v-col>
         <div class="d-flex align-center justify-center" style="height: 50vh">
-          <v-card
-            width="500"
-            elevation="0"
-            class="text-center d-flex align-center justify-center"
-          >
+          <v-card width="500" elevation="0" class="text-center d-flex align-center justify-center">
             <v-card-text>
-              <v-icon size="70" color="grey-darken-1"
-                >mdi-information-outline</v-icon
-              >
+              <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
               <h2 class="text-grey-darken-1">No Data Available</h2>
-              <v-btn
-              class="mb-3 mt-10 text-capitalize"
-              variant="flat"
-              prepend-icon="mdi-plus"
-              color="primary"
-              @click="showAddCourseDialog()"
-              >Create Class</v-btn
-            >
+              <v-btn v-if="classSettings.enable_create_class == true" class="mb-3 mt-10 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
+                @click="showAddCourseDialog()">Create Class</v-btn>
             </v-card-text>
           </v-card>
         </div>
@@ -33,36 +17,19 @@
     </v-row>
     <v-row v-else>
       <v-col cols="12" md="12">
-        <v-skeleton-loader
-          v-if="loader"
-          class="mx-auto"
-          elevation="0"
-          color="transparent"
-          :loading="loader"
-          type="article, list-item-two-line"
-        >
+        <v-skeleton-loader v-if="loader" class="mx-auto" elevation="0" color="transparent" :loading="loader"
+          type="article, list-item-two-line">
         </v-skeleton-loader>
         <v-card elevation="0" color="transparent" v-else>
-          <v-toolbar elevation="0" dense color="transparent">
-            <v-btn
-              class="mb-3 text-capitalize"
-              variant="flat"
-              prepend-icon="mdi-plus"
-              color="primary"
-              @click="showAddCourseDialog()"
-              >Create Class</v-btn
-            >
+          <v-toolbar elevation="0" dense color="transparent" v-if="classSettings.enable_create_class == true">
+            <v-btn class="mb-3 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
+              @click="showAddCourseDialog()">Create Class</v-btn>
             <v-spacer></v-spacer>
           </v-toolbar>
 
           <v-row no-gutters>
             <v-col cols="12" v-for="item in classList" :key="item.id">
-              <v-card
-                elevation="0"
-                class="c-card mb-2"
-                :to="`/class/${item.documentId}`"
-                :loading="false"
-              >
+              <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
                 <v-row no-gutters>
                   <v-col cols="12" md="3" class="pl-5">
                     <div class="c-name mt-3">{{ item.subject_code }}</div>
@@ -73,7 +40,7 @@
                   <v-col cols="12" md="2">
 
                   </v-col>
-                  <v-col cols="12" md="7">
+                  <v-col cols="12" md="6">
                     <v-table density="compact">
                       <thead>
                         <tr>
@@ -100,6 +67,24 @@
                         </tr>
                       </tbody>
                     </v-table>
+                  </v-col>
+                  <v-col cols="12" md="1">
+                    <!-- <div>
+                      <v-card height="80" color="green" class="elevation-0">
+                        <v-icon size="50">mdi-check-circle-outline</v-icon>
+                      </v-card>
+                    </div> -->
+                  
+                    <!-- <v-sheet v-if="item.finalize == true" height="80" class="d-flex align-center justify-center" color="green">
+                      <v-icon  size="50" >mdi-check-circle-outline</v-icon>
+                    </v-sheet>
+                    <v-sheet v-else  height="80" class="d-flex align-center justify-center" color="warning">
+                      <v-icon size="50" >mdi-information-outline</v-icon>
+                    </v-sheet> -->
+                    <v-sheet height="80" class="d-flex align-center justify-center">
+                      <v-icon v-if="item.finalize == true" color="success"  size="60" >mdi-check-circle-outline</v-icon>
+                      <v-icon v-else color="#E0E0E0" size="60" >mdi-check-circle-outline</v-icon>
+                    </v-sheet>
                   </v-col>
                   <!-- <v-col cols="12" md="2" class="text-right">
                       <v-btn class="btn-check" color="primary" size="small" icon="mdi-open-in-new" elevation="0"
@@ -147,29 +132,13 @@
                   :rules="rules.courseCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="courses"
-                  item-title="code"
-                  item-value="code"
-                  label="Course*"
-                  v-model="courseCode"
-                  :rules="rules.courseCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="courses" item-title="code" item-value="code" label="Course*"
+                  v-model="courseCode" :rules="rules.courseCode" variant="outlined" return-object required></v-select>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Section"
-                  v-model="section"
-                  variant="outlined"
-                  @input="section = section.toUpperCase()"
-                  :rules="rules.section"
-                  required
-                ></v-text-field>
+                <v-text-field label="Section" v-model="section" variant="outlined"
+                  @input="section = section.toUpperCase()" :rules="rules.section" required></v-text-field>
               </v-col>
               <v-col cols="12">
                 <!-- <label class="label text-grey-darken-2" for="email">Course</label> -->
@@ -180,44 +149,21 @@
                   :rules="rules.subjectCode"
                   required
                 ></v-text-field> -->
-                <v-select
-                  color="primary"
-                  :items="subjectList"
-                  item-title="code"
-                  item-value="code"
-                  label="Subject Code*"
-                  v-model="subjectCode"
-                  :rules="rules.subjectCode"
-                  variant="outlined"
-                  return-object
-                  required
-                ></v-select>
+                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Subject Description*"
-                  v-model="subjectDesc"
-                  @input="subjectDesc = subjectDesc.toUpperCase()"
-                  variant="outlined"
-                  :rules="rules.subjectDesc"
-                  readonly
-                  required
-                ></v-text-field>
+                <v-text-field label="Subject Description*" v-model="subjectDesc"
+                  @input="subjectDesc = subjectDesc.toUpperCase()" variant="outlined" :rules="rules.subjectDesc"
+                  readonly required></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <!-- <label class="label mb-4" for="email">Student No</label> -->
-                <v-text-field
-                  label="Units"
-                  v-model="units"
-                  variant="outlined"
-                  :rules="rules.units"
-                  type="number"
-                  readonly
-                  required
-                ></v-text-field>
+                <v-text-field label="Units" v-model="units" variant="outlined" :rules="rules.units" type="number"
+                  readonly required></v-text-field>
               </v-col>
               <!-- <v-col cols="12">
                 <v-select
@@ -324,14 +270,8 @@
         <v-divider></v-divider>
 
         <v-card-actions class="mx-5 my-2">
-          <v-btn
-            block
-            color="green"
-            text="Save"
-            variant="flat"
-            :loading="loadingCreateClass"
-            @click="createClass()"
-          ></v-btn>
+          <v-btn block color="green" text="Save" variant="flat" :loading="loadingCreateClass"
+            @click="createClass()"></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -385,6 +325,7 @@ const subjectList = ref([]);
 const emptySubject = ref(false);
 const createClassForm = ref(null);
 const classList = ref([]);
+const classSettings = ref({});
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
   subjectDesc: [(v) => !!v || "Subject description is required"],
@@ -403,7 +344,7 @@ async function initialize() {
       `/api/class/getClassList?teacher_id=${userData.value.teacher_id}&sy=${schoolYear.value}&semester=${semester.value}`
     );
     if (result) {
-      console.log("List: ", result);
+      //console.log("List: ", result);
       classList.value = result;
       loader.value = false;
       noData.value = false;
@@ -411,7 +352,21 @@ async function initialize() {
         noData.value = true;
         console.log("No data available");
       }
- 
+
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+// Get Class Settings
+async function getClassSettings() {
+  try {
+    let result = await $fetch(`/api/class-settings/getClassSettings`);
+    if (result) {
+      //console.log("Class Settings: ", result.data[0]);
+      classSettings.value = result.data[0];
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
@@ -422,7 +377,7 @@ async function initialize() {
 
 async function getActiveSchoolyear() {
   try {
-    let result = await  $fetch("/api/school-year/getActiveSchoolYear");
+    let result = await $fetch("/api/school-year/getActiveSchoolYear");
 
     if (result) {
       semester.value = result[0].semester
@@ -459,7 +414,7 @@ async function getSubjectsByCourse(coursecode) {
     if (result) {
       subjectList.value = result;
       if (result.length == 0) {
-        console.log("Course doesn't have subjects");
+        //console.log("Course doesn't have subjects");
         //emptySubject.value = true;
         subjectCode.value = "";
         subjectDesc.value = "";
@@ -530,18 +485,19 @@ async function classDetails(item) {
 onMounted(async () => {
   await getActiveSchoolyear();
   await initialize();
+  await getClassSettings();
 });
 
 watch([createClassDialog, courseCode, subjectCode], async () => {
   if (createClassDialog.value === false) {
-    console.log("Create Class dialog box closed");
+    //console.log("Create Class dialog box closed");
     createClassForm.value?.reset();
   }
   if (courseCode.value) {
     //console.log("Selected Course: ", courseCode.value?.code);
     getSubjectsByCourse(courseCode.value?.code);
     if (subjectCode.value) {
-      console.log("Subject: ", subjectCode.value);
+      //console.log("Subject: ", subjectCode.value);
       subjectDesc.value = subjectCode.value?.title;
       units.value = subjectCode.value?.units;
     }

@@ -25,12 +25,12 @@
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <div v-if="finalizeClass == null || finalizeClass == false">
-            <v-btn  color="warning" icon size="small" variant="text"
-              @click="showUpdateClassDialog()"><v-icon size="large">mdi-pencil</v-icon>
-              <v-tooltip activator="parent" location="top">Edit</v-tooltip></v-btn>
-            <!-- <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
+              <v-btn color="warning" icon size="small" variant="text" @click="showUpdateClassDialog()"><v-icon
+                  size="large">mdi-pencil</v-icon>
+                <v-tooltip activator="parent" location="top">Edit</v-tooltip></v-btn>
+              <!-- <v-btn color="red" icon size="small" variant="text" @click="deleteCourseDialog = true"><v-icon
                 size="large">mdi-delete</v-icon><v-tooltip activator="parent" location="top">Delete</v-tooltip></v-btn> -->
-              </div>
+            </div>
           </v-toolbar>
           <v-divider></v-divider>
           <v-list density="compact">
@@ -77,16 +77,20 @@
           </v-list>
 
           <!-- <v-divider></v-divider> -->
-           
+
           <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
-            <v-btn prepend-icon="mdi-check-circle" @click="finalizedClassDialog = true" color="green" variant="flat" block>Finalize</v-btn>
+            <v-btn prepend-icon="mdi-check-circle" @click="finalizedClassDialog = true" color="green" variant="flat"
+              block>Finalize</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="9">
         <v-card variant="flat">
-          <v-toolbar color="transparent" class="pr-3" density="comfortable" v-if="finalizeClass == null || finalizeClass == false">
+          <v-toolbar color="transparent" class="pr-3" density="comfortable"
+            v-if="finalizeClass == null || finalizeClass == false">
             <v-spacer></v-spacer>
+            <v-btn variant="flat" color="blue" class="text-capitalize px-4 mr-2" @click="showImportStudentDialog()">
+              <v-icon start>mdi-import</v-icon>Import Student</v-btn>
             <v-btn variant="flat" color="primary" class="text-capitalize px-4" @click="addStudentDialog = true">
               <v-icon start>mdi-plus</v-icon>Add Student</v-btn>
           </v-toolbar>
@@ -248,7 +252,7 @@
 
         <v-divider></v-divider>
         <v-card-text>
-          <v-data-table density="compact" v-model:search="search" :items="studentList" :headers="studentHeaders"
+          <v-data-table density="compact" :search="search" :items="studentList" :headers="studentHeaders"
             :loading="loading2">
             <template v-slot:loading2>
               <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -267,6 +271,63 @@
               </v-tooltip>
             </template>
           </v-data-table>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Import Students from existing class -->
+    <v-dialog max-width="800" v-model="importStudentDialog" scrollable persistent>
+      <v-card elevation="0">
+        <v-toolbar color="primary" density="compact">
+          <v-icon class="ml-4">mdi-account-group</v-icon>
+          <v-toolbar-title> Import Students</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="importStudentDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text>
+          <v-data-iterator :items="classStudentList" item-value="id">
+            <template v-slot:default="{ items, isExpanded, toggleExpand }">
+              <v-row>
+                <v-col v-for="item in items" :key="item.raw.id" cols="12">
+                  <v-card variant="flat">
+                    <v-card-title class="d-flex align-center">
+                      <h5>{{ item.raw.subject_code }} - {{ item.raw.subject_description }}</h5>
+                      <v-spacer></v-spacer><v-btn variant="flat" color="primary" class="text-capitalize"
+                        @click="importStudents(item.raw.student_list)"><v-icon start>mdi-import</v-icon> Import</v-btn>
+                    </v-card-title>
+
+                    <v-card-text>
+                      <h4>{{ item.raw.course_code }}-{{ item.raw.section }}</h4>
+                    </v-card-text>
+
+                    <div class="px-4">
+                      <v-switch color="primary" :label="`${isExpanded(item) ? 'Hide' : 'Show'} students`"
+                        :model-value="isExpanded(item)" density="compact" inset
+                        @click="() => toggleExpand(item)"></v-switch>
+                    </div>
+
+                    <v-expand-transition>
+                      <div v-if="isExpanded(item)">
+                        <v-divider></v-divider>
+                        <v-data-table density="compact" :items="item.raw.student_list" :headers="studentClassHeaders"
+                          :loading="loading2">
+                          <template v-slot:loading2>
+                            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                          </template>
+                        </v-data-table>
+                      </div>
+                    </v-expand-transition>
+                  </v-card>
+                  <v-divider></v-divider>
+                </v-col>
+
+              </v-row>
+            </template>
+          </v-data-iterator>
+
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -321,7 +382,7 @@
                 <v-row dense>
                   <v-col cols="12" md="4"><v-checkbox v-model="incomplete" color="green" label="Incomplete"
                       hide-details></v-checkbox>
-                    </v-col>
+                  </v-col>
                   <v-col cols="12" md="4"><v-checkbox v-model="fda" color="green" label="Failed due to absences"
                       hide-details></v-checkbox></v-col>
                   <v-col cols="12" md="4"><v-checkbox v-model="dropped" color="green" label="Dropped"
@@ -353,13 +414,13 @@
       </v-card>
     </v-dialog>
 
-     <!-- Finalized Class Dialog -->
-     <v-dialog v-model="finalizedClassDialog" width="auto">
+    <!-- Finalized Class Dialog -->
+    <v-dialog v-model="finalizedClassDialog" width="auto">
       <v-card class="text-body-2" color="#607D8B" max-width="400" prepend-icon="mdi-check-circle"
         text="Are you sure you want to finalize this class?" :title="`Finalize Class`">
         <template v-slot:actions>
           <v-spacer></v-spacer>
-          <v-btn class="text-none" rounded :loading="loadingDeleteGrade" text="Finalize" prepend-icon="mdi-check" 
+          <v-btn class="text-none" rounded :loading="loadingDeleteGrade" text="Finalize" prepend-icon="mdi-check"
             variant="tonal" @click="finalizedClass()"></v-btn>
           <v-btn class="text-none" rounded text="Cancel" prepend-icon="mdi-close" color="red" variant="tonal"
             @click="finalizedClassDialog = false"></v-btn>
@@ -404,6 +465,24 @@
       </v-list>
     </v-dialog>
 
+     <!-- Import Students Loader Dialog box -->
+     <v-dialog v-model="importStudentLoader" max-width="320" persistent>
+      <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+        <v-list-item prepend-icon="mdi-import" title="Importing students...">
+          <template v-slot:prepend>
+            <div class="pe-4">
+              <v-icon color="primary" size="x-large"></v-icon>
+            </div>
+          </template>
+
+          <template v-slot:append>
+            <v-progress-circular color="primary" indeterminate="disable-shrink" size="16"
+              width="2"></v-progress-circular>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -420,6 +499,7 @@ const loader = ref(true);
 const loading = ref(true);
 const loading2 = ref(true);
 const addStudentLoader = ref(false)
+const importStudentLoader = ref(false);
 const search = ref(null);
 const valid = ref(true);
 // Class Details
@@ -433,6 +513,7 @@ const updateClassForm = ref(null);
 const classDetails = ref({});
 const isEmpty = ref(false);
 const addStudentDialog = ref(false);
+const importStudentDialog = ref(false);
 const studentSubjectList = ref([]);
 const updateGradeDialog = ref(false);
 const addGradeForm = ref(null);
@@ -482,6 +563,8 @@ const remarks = ref("");
 const fda = ref(false);
 const incomplete = ref(false);
 const dropped = ref(false);
+const classStudentList = ref([])
+const isExpanded = ref(false);
 
 useHead({
   title: "Classes",
@@ -537,6 +620,15 @@ const studentHeaders = ref([
   // { title: "Major", key: "major", sortable: false },
   { title: "", key: "actions", align: "end", sortable: false },
 ]);
+
+const studentClassHeaders = ref([
+  { title: "Student No", sortable: false, key: "student_no" },
+  { title: "Lastname", sortable: false, key: "last_name" },
+  { title: "Firstname", sortable: false, key: "first_name" },
+  { title: "Middlename", sortable: false, key: "middle_name" },
+  { title: "Course", sortable: false, key: "course_code" },
+
+])
 // const gradeRules = ref([ value => {
 //   if (value >= 101) return true
 //   return 'Firstname must be atleast 3 characters'
@@ -682,7 +774,7 @@ async function updateClass() {
       time_start: timeStart.value,
       time_end: timeEnd.value,
     };
-    console.log("Update Class: ", payload);
+    //console.log("Update Class: ", payload);
 
     await $fetch(`/api/class/update/${route.params.id}`, {
       method: "PUT",
@@ -848,12 +940,76 @@ async function finalizedClass() {
     toast.success("Class Successfully Finalized!")
     initialize();
   })
-  .catch(err => {
-    console.log(err);
-    finalizeLoader.value = false;
-    finalizedClassDialog.value = false;
-  })
+    .catch(err => {
+      console.log(err);
+      finalizeLoader.value = false;
+      finalizedClassDialog.value = false;
+    })
 }
+
+// Show import student dialog box
+async function showImportStudentDialog() {
+  importStudentDialog.value = true
+  getClassStudents()
+}
+
+
+async function getClassStudents(ctx) {
+  try {
+    let result = await $fetch(`/api/class/getClassStudents?teacher_id=${userData.value.teacher_id}&class_id=${route.params.id}`);
+
+    if (result) {
+      //console.log("Classes List: ", result);
+      classStudentList.value = result;
+      loading2.value = false;
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+async function importStudents(items) {
+  //console.log("List of Imported Students", items);
+  importStudentLoader.value = true;
+  if (items.length == 0) {
+    //console.log("No students imported!");
+    toast.error("No available students to be imported!");
+    importStudentLoader.value = false;
+  } else {
+    let arrObj = items;
+    for (const element of arrObj) {
+      element.class_id = route.params.id;
+      element.section = classDetails.value?.section;
+      element.unit = classDetails.value?.units;
+      element.semester = classDetails.value?.semester;
+      element.school_year = classDetails.value?.school_year;
+      element.grade = 0;
+      element.numeric_grade = "0.00";
+      element.remarks = "";
+      element.teacher_id = classDetails.value?.teacher_id;
+    }
+    //console.log("List of Imported Students with new elements", arrObj);
+
+    let payload = {
+      student_list: arrObj
+    }
+    await $fetch(`/api/student-subject/importMultipleStudents`, {
+      method: "POST",
+      body: payload
+    })
+      .then(response => {
+        //console.log(response);
+        toast.success("Successfully imported!");
+        getStudentSubjectList();
+        importStudentLoader.value = false
+      })
+  }
+
+
+}
+
+
 
 
 const numericGrade = computed(() => {
