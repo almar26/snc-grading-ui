@@ -276,7 +276,7 @@
     </v-dialog>
 
     <!-- Import Students from existing class -->
-    <v-dialog max-width="800" v-model="importStudentDialog" scrollable persistent>
+    <v-dialog max-width="1000" v-model="importStudentDialog" scrollable persistent>
       <v-card elevation="0">
         <v-toolbar color="primary" density="compact">
           <v-icon class="ml-4">mdi-account-group</v-icon>
@@ -294,16 +294,11 @@
               <div class="service-notif mt-5">Loading....</div>
             </v-card>
           </div>
-          <v-data-iterator :items="classStudentList" item-value="id" v-else>
+          <!-- <v-data-iterator :items="classStudentList" item-value="id" v-else>
             <template v-slot:default="{ items, isExpanded, toggleExpand }">
               <v-row>
                 <v-col v-for="item in items" :key="item.raw.id" cols="12">
                   <v-card variant="flat">
-                    <!-- <v-card-title class="d-flex align-center">
-                      <h5>{{ item.raw.subject_code }} - {{ item.raw.subject_description }}</h5>
-                      <v-spacer></v-spacer><v-btn variant="flat" color="primary" class="text-capitalize"
-                        @click="importStudents(item.raw.student_list)"><v-icon start>mdi-import</v-icon> Import</v-btn>
-                    </v-card-title> -->
                     <v-toolbar color="transparent" density="compact">
                       <v-toolbar-title>
                         <h5>{{ item.raw.subject_code }} - {{ item.raw.subject_description }}</h5>
@@ -340,8 +335,41 @@
 
               </v-row>
             </template>
-          </v-data-iterator>
+          </v-data-iterator> -->
 
+          <v-row dense>
+            <v-col cols="12" md="6" v-for="(item, $index) in classStudentList" :key="$index">
+              <v-card class="mb-3 card-outlined" elevation="0">
+                <v-card-title>
+                 <v-icon size="25">mdi-book</v-icon> {{ item.subject_code }} ({{ item.course_code }}-{{ item.section }})
+                </v-card-title>
+                <v-card-subtitle>
+                  {{ item.subject_description }}
+                  <!-- {{ item.course_code }}-{{ item.section }} -->
+                </v-card-subtitle>
+                <v-card-actions>
+                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="item.show = !item.show"></v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" prepend-icon="mdi-import" text="Import" variant="outlined"
+                    @click="importStudents(item.student_list)"></v-btn>
+
+                </v-card-actions>
+                <v-expand-transition>
+                  <div v-show="item.show">
+                    <v-divider></v-divider>
+                    <v-card-text>
+                      <v-data-table density="compact" :items="item.student_list" :headers="studentClassHeaders"
+                        :loading="loading2">
+                        <template v-slot:loading2>
+                          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
+                  </div>
+                </v-expand-transition>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -580,6 +608,7 @@ const incomplete = ref(false);
 const dropped = ref(false);
 const classStudentList = ref([])
 const isExpanded = ref(false);
+const show = ref(false);
 
 useHead({
   title: "Classes",
@@ -974,7 +1003,7 @@ async function getClassStudents(ctx) {
     let result = await $fetch(`/api/class/getClassStudents?teacher_id=${userData.value.teacher_id}&class_id=${route.params.id}`);
 
     if (result) {
-      //console.log("Classes List: ", result);
+      console.log("Classes List: ", result);
       loaderImport.value = false;
       classStudentList.value = result;
       loading2.value = false;
@@ -1249,5 +1278,9 @@ onMounted(async () => {
 
 :deep() .v-table .v-table__wrapper>table>tbody>tr:hover {
   background-color: #f2f2f2;
+}
+
+.card-outlined {
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
 </style>

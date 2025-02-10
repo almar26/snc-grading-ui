@@ -484,8 +484,9 @@ async function classDetails(item) {
 
 onMounted(async () => {
   await getActiveSchoolyear();
-  await initialize();
   await getClassSettings();
+  await initialize();
+ 
 });
 
 watch([createClassDialog, courseCode, subjectCode], async () => {
