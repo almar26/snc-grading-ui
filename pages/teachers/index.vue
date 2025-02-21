@@ -205,7 +205,7 @@ async function initialize() {
     if (result) {
       teachersAccountList.value = result;
       loadingTable.value = false;
-      console.log(result);
+      //console.log(result);
     }
   } catch (er) {
     console.error("Failed to fetch data: ", err);

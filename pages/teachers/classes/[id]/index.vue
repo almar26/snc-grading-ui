@@ -219,7 +219,7 @@ async function initialize() {
         isEmpty.value = true;
       } else {
         loader.value = false;
-        console.log(result[0])
+        //console.log(result[0])
         teacherDetails.value = result[0]
       }
     }
@@ -253,7 +253,7 @@ async function getFacultyClasses() {
       `/api/class/getClassList?teacher_id=${route.params.id}&sy=${schoolYear.value}&semester=${semester.value}`
     );
     if (result) {
-      console.log("List: ", result);
+      //console.log("List: ", result);
       classList.value = result;
       loader.value = false;
       loading.value = false;
@@ -266,7 +266,7 @@ async function getFacultyClasses() {
 
 // Open View Class Dialog
 async function openViewClassDialog(item) {
-  console.log(item)
+  //console.log(item)
   classid.value = item.documentId;
   subjectCode.value = item.subject_code;
   subjectDesc.value = item.subject_description;

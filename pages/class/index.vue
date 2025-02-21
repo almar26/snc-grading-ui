@@ -1,106 +1,184 @@
 <template>
   <div>
     <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
-    <v-row v-if="noData">
-      <v-col>
-        <div class="d-flex align-center justify-center" style="height: 50vh">
-          <v-card width="500" elevation="0" class="text-center d-flex align-center justify-center">
-            <v-card-text>
-              <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
-              <h2 class="text-grey-darken-1">No Data Available</h2>
-              <v-btn v-if="classSettings.enable_create_class == true" class="mb-3 mt-10 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
-                @click="showAddCourseDialog()">Create Class</v-btn>
-            </v-card-text>
-          </v-card>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row v-else>
+
+    <v-row>
       <v-col cols="12" md="12">
         <v-skeleton-loader v-if="loader" class="mx-auto" elevation="0" color="transparent" :loading="loader"
           type="article, list-item-two-line">
         </v-skeleton-loader>
         <v-card elevation="0" color="transparent" v-else>
-          <v-toolbar elevation="0" dense color="transparent" v-if="classSettings.enable_create_class == true">
+          <!-- <v-toolbar elevation="0" dense color="transparent" v-if="classSettings.enable_create_class == true">
             <v-btn class="mb-3 text-capitalize" variant="flat" prepend-icon="mdi-plus" color="primary"
               @click="showAddCourseDialog()">Create Class</v-btn>
             <v-spacer></v-spacer>
-          </v-toolbar>
+          </v-toolbar> -->
 
-          <v-row no-gutters>
-            <v-col cols="12" v-for="item in classList" :key="item.id">
-              <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
-                <v-row no-gutters>
-                  <v-col cols="12" md="3" class="pl-5">
-                    <div class="c-name mt-3">{{ item.subject_code }}</div>
-                    <div class="c-brgy mb-3">
-                      {{ item.subject_description }}
-                    </div>
-                  </v-col>
-                  <v-col cols="12" md="2">
+          <v-row>
+            <v-col cols="12" md="3">
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-card elevation="0" class="mb-2">
+                    <v-toolbar density="comfortable" color="white" class="px-4">
+                      <v-icon>mdi-folder</v-icon>
+                      <v-toolbar-title>Previous Classes</v-toolbar-title>
+                    </v-toolbar>
+                  </v-card>
+                </v-col>
+                <v-col cols="12">
+                  <v-card v-if="noPrevData" elevation="0"
+                    class="text-center d-flex align-center justify-center">
+                    <v-card-text class="py-15">
+                      <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
+                      <h2 class="text-grey-darken-1">No Data Available</h2>
+                      <!-- <v-btn v-if="classSettings.enable_create_class == true" class="mb-3 mt-10 text-capitalize"
+                        variant="flat" prepend-icon="mdi-plus" color="primary" @click="showAddCourseDialog()">Create
+                        Class</v-btn> -->
+                    </v-card-text>
+                  </v-card>
+                  <v-card elevation="0" v-else>
+                    <v-list lines="two" nav>
+                      <div v-for="item in inactiveSY" :key="item.id">
+                        <v-list-item :to="`/class/sy?school_year=${item.school_year}&semester=${item.semester}`">
+                          <template v-slot:prepend> 
+                            <v-avatar class="bg-grey-lighten-1 text-white" icon="mdi-folder"></v-avatar>
+                          </template>
+                          <v-list-item-title>{{ item.school_year }}</v-list-item-title>
+                          <v-list-item-subtitle>{{ item.semester }}</v-list-item-subtitle>
+                          <template v-slot:append>
+                            <v-list-item-action>
+                              <v-icon color="grey-lighten-1">mdi-information</v-icon>
+                            </v-list-item-action>
+                          </template>
+                        </v-list-item>
+                        <v-divider></v-divider>
+                      </div>
+                      <!-- <v-list-item value="asd2">
+                        <template v-slot:prepend>
+                          <v-avatar class="bg-grey-lighten-1 text-white" icon="mdi-folder"></v-avatar>
+                        </template>
+                        <v-list-item-title>2024-2025</v-list-item-title>
+                        <v-list-item-subtitle>1st Semester</v-list-item-subtitle>
+                        <template v-slot:append>
+                          <v-list-item-action>
+                            <v-btn color="grey-lighten-1" icon="mdi-information" variant="text"></v-btn>
+                          </v-list-item-action>
+                        </template>
+                      </v-list-item>
+                      <v-divider></v-divider> -->
 
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-table density="compact">
-                      <thead>
-                        <tr>
-                          <th class="text-left title-table">
-                            Course & Section
-                          </th>
-                          <th class="text-left title-table">Semester</th>
-                          <th class="text-left title-table">School Year</th>
-                          <!-- <th class="text-left title-table">Days</th>
+                    </v-list>
+                  </v-card></v-col>
+              </v-row>
+
+            </v-col>
+            <v-col cols="12" md="9">
+
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-card elevation="0" class="mb-2">
+                    <v-toolbar density="comfortable" color="white" class="px-4">
+                      <v-icon>mdi-folder</v-icon>
+                      <v-toolbar-title>Current Classes</v-toolbar-title>
+                      <v-spacer></v-spacer><v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated" prepend-icon="mdi-plus"
+                        color="primary" @click="showAddCourseDialog()">Create Class</v-btn></v-toolbar>
+                  </v-card>
+                  <v-card v-if="noData" elevation="0"
+                    class="text-center d-flex align-center justify-center">
+                    <v-card-text class="py-15">
+                      <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
+                      <h2 class="text-grey-darken-1">No Data Available</h2>
+                      <!-- <v-btn v-if="classSettings.enable_create_class == true" class="mb-3 mt-10 text-capitalize"
+                        variant="flat" prepend-icon="mdi-plus" color="primary" @click="showAddCourseDialog()">Create
+                        Class</v-btn> -->
+                    </v-card-text>
+                  </v-card>
+
+                </v-col>
+                <v-col cols="12" v-for="item in classList" :key="item.id">
+                  <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
+                    <v-row no-gutters>
+                      <v-col cols="2" md="1">
+                        <v-sheet height="80" class="d-flex align-center justify-center">
+                        <v-avatar>
+                          <v-icon size="35">mdi-file</v-icon>
+                        </v-avatar>
+                      </v-sheet>
+                      </v-col>
+                      <v-col cols="10" md="4" class="pl-5">
+                        <div class="c-name mt-3">{{ item.subject_code }}</div>
+                        <div class="c-brgy mb-3">
+                          {{ item.subject_description }}
+                        </div>
+                      </v-col>
+                      <v-col cols="12" md="1">
+
+                      </v-col>
+                      <v-col cols="12" md="5">
+                        <v-table density="compact">
+                          <thead>
+                            <tr>
+                              <th class="text-left title-table">
+                                Course & Section
+                              </th>
+                              <th class="text-left title-table">Semester</th>
+                              <th class="text-left title-table">School Year</th>
+                              <!-- <th class="text-left title-table">Days</th>
                           <th class="text-left title-table">Time</th> -->
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="value-table">
-                            {{ item.course_code }}-{{ item.section }}
-                          </td>
-                          <td class="value-table">{{ item.semester }}</td>
-                          <td class="value-table">{{ item.school_year }}</td>
-                          <!-- <td class="value-table">{{ item.days }}</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td class="value-table">
+                                {{ item.course_code }}-{{ item.section }}
+                              </td>
+                              <td class="value-table">{{ item.semester }}</td>
+                              <td class="value-table">{{ item.school_year }}</td>
+                              <!-- <td class="value-table">{{ item.days }}</td>
                           <td class="value-table">
                             {{ item.time_start }} - {{ item.time_end }}
                           </td> -->
-                        </tr>
-                      </tbody>
-                    </v-table>
-                  </v-col>
-                  <v-col cols="12" md="1">
-                    <!-- <div>
+                            </tr>
+                          </tbody>
+                        </v-table>
+                      </v-col>
+                      <v-col cols="12" md="1">
+                        <!-- <div>
                       <v-card height="80" color="green" class="elevation-0">
                         <v-icon size="50">mdi-check-circle-outline</v-icon>
                       </v-card>
                     </div> -->
-                  
-                    <!-- <v-sheet v-if="item.finalize == true" height="80" class="d-flex align-center justify-center" color="green">
+
+                        <!-- <v-sheet v-if="item.finalize == true" height="80" class="d-flex align-center justify-center" color="green">
                       <v-icon  size="50" >mdi-check-circle-outline</v-icon>
                     </v-sheet>
                     <v-sheet v-else  height="80" class="d-flex align-center justify-center" color="warning">
                       <v-icon size="50" >mdi-information-outline</v-icon>
                     </v-sheet> -->
-                    <v-sheet height="80" class="d-flex align-center justify-center">
-                      <v-icon v-if="item.finalize == true" color="success"  size="60" >mdi-check-circle-outline</v-icon>
-                      <v-icon v-else color="#E0E0E0" size="60" >mdi-check-circle-outline</v-icon>
-                    </v-sheet>
-                  </v-col>
-                  <!-- <v-col cols="12" md="2" class="text-right">
+                        <v-sheet height="80" class="d-flex align-center justify-center">
+                          <v-icon v-if="item.finalize == true" color="success"
+                            size="60">mdi-check-circle-outline</v-icon>
+                          <v-icon v-else color="#E0E0E0" size="60">mdi-check-circle-outline</v-icon>
+                        </v-sheet>
+                      </v-col>
+                      <!-- <v-col cols="12" md="2" class="text-right">
                       <v-btn class="btn-check" color="primary" size="small" icon="mdi-open-in-new" elevation="0"
                         :to="`/class/${item.documentId}`" v-show="true"></v-btn>
                       <v-btn class="btn-check" color="red" size="small" icon="mdi-delete" elevation="0"
                         v-show="true"></v-btn>
                     </v-col> -->
 
-                  <!-- <v-col cols="12" md="1" class="text-right">
+                      <!-- <v-col cols="12" md="1" class="text-right">
                       <v-btn class="btn-check" color="primary" elevation="0" :to="`/class/${item.documentId}`"
                         v-show="true">View</v-btn>
                     </v-col> -->
-                </v-row>
-              </v-card>
+                    </v-row>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
+
         </v-card>
 
         <!-- <v-fab color="primary" icon="mdi-plus" location="bottom end" class="mb-4"  size="64" @click="showAddCourseDialog()" absolute app appear></v-fab> -->
@@ -304,6 +382,7 @@ const breadcrumbs = ref([
 const toast = useToast();
 const loader = ref(true);
 const noData = ref(false);
+const noPrevData = ref(false);
 const modal_start = ref(null);
 const modal_end = ref(false);
 const loadingCreateClass = ref(false);
@@ -326,6 +405,7 @@ const emptySubject = ref(false);
 const createClassForm = ref(null);
 const classList = ref([]);
 const classSettings = ref({});
+const inactiveSY = ref([]);
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
   subjectDesc: [(v) => !!v || "Subject description is required"],
@@ -350,7 +430,7 @@ async function initialize() {
       noData.value = false;
       if (result.length == 0) {
         noData.value = true;
-        console.log("No data available");
+        //console.log("No data available");
       }
 
     }
@@ -374,7 +454,7 @@ async function getClassSettings() {
   }
 }
 
-
+// Get Active School Year
 async function getActiveSchoolyear() {
   try {
     let result = await $fetch("/api/school-year/getActiveSchoolYear");
@@ -382,6 +462,28 @@ async function getActiveSchoolyear() {
     if (result) {
       semester.value = result[0].semester
       schoolYear.value = result[0].school_year;
+      //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+// Get Inactive School Year
+async function getInactiveSchoolyear() {
+  try {
+    let result = await $fetch("/api/school-year/getInactiveSchoolYear");
+
+    if (result) {
+      //console.log("List of inactive school year", result)
+      inactiveSY.value = result;
+      noPrevData.value = false;
+      if (result.length == 0) {
+        //console.log("No Previous Data Available")
+        noPrevData.value = true;
+      }
+      
       //console.log("Active School Year: ", result[0])
     }
   } catch (err) {
@@ -485,8 +587,9 @@ async function classDetails(item) {
 onMounted(async () => {
   await getActiveSchoolyear();
   await getClassSettings();
+  await getInactiveSchoolyear();
   await initialize();
- 
+
 });
 
 watch([createClassDialog, courseCode, subjectCode], async () => {
