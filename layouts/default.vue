@@ -88,7 +88,7 @@
                 <h4 class="mt-1">{{ userData.first_name }} {{ userData.last_name }}</h4>
                 <p class="text-caption mt-1">Department: {{ userData.department }}</p>
                 <v-divider class="my-3"></v-divider>
-                <v-btn prepend-icon="mdi-pencil" variant="text" rounded>
+                <v-btn prepend-icon="mdi-pencil" variant="text" to="/account" rounded>
                   Edit Account
                 </v-btn>
                 <v-divider class="my-3"></v-divider>

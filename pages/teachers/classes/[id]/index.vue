@@ -143,6 +143,9 @@ const userData = ref(userInfo?.value.user);
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
+useHead({
+  title: "Teachers Classes",
+});
 const page = ref({
   title: "List of Classes",
 });

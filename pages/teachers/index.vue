@@ -131,6 +131,9 @@ import { useMyAuthStore } from "~/stores/auth";
 const { userInfo } = storeToRefs(useMyAuthStore());
 const userData = ref(userInfo?.value.user);
 const toast = useToast();
+useHead({
+  title: "Teachers",
+});
 const page = ref({
   title: "Teachers",
 });

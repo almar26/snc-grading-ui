@@ -769,7 +769,7 @@ async function getSubjectsByCourse(coursecode) {
     if (result) {
       subjectList.value = result;
       if (result.length == 0) {
-        console.log("Course doesn't have subjects");
+        //console.log("Course doesn't have subjects");
         //emptySubject.value = true;
         subjectCode.value = "";
         subjectDesc.value = "";
@@ -1003,7 +1003,7 @@ async function getClassStudents(ctx) {
     let result = await $fetch(`/api/class/getClassStudents?teacher_id=${userData.value.teacher_id}&class_id=${route.params.id}`);
 
     if (result) {
-      console.log("Classes List: ", result);
+      //console.log("Classes List: ", result);
       loaderImport.value = false;
       classStudentList.value = result;
       loading2.value = false;
