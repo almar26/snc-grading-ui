@@ -1016,7 +1016,7 @@ async function getClassStudents(ctx) {
 }
 
 async function importStudents(items) {
-  //console.log("List of Imported Students", items);
+  console.log("List of Imported Students", items);
   importStudentLoader.value = true;
   if (items.length == 0) {
     //console.log("No students imported!");
@@ -1027,6 +1027,7 @@ async function importStudents(items) {
     for (const element of arrObj) {
       element.class_id = route.params.id;
       element.section = classDetails.value?.section;
+      element.subject_code = classDetails.value?.subject_code;
       element.unit = classDetails.value?.units;
       element.semester = classDetails.value?.semester;
       element.school_year = classDetails.value?.school_year;

@@ -1,15 +1,7 @@
 <template>
   <div>
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    ></BaseBreadcrumb>
-    <div
-      class="d-flex align-center justify-center"
-      style="height: 80vh"
-      v-if="loader"
-    >
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
+    <div class="d-flex align-center justify-center" style="height: 80vh" v-if="loader">
       <VueSpinnerPie color="orange" size="50" />
     </div>
     <div v-else>
@@ -17,10 +9,8 @@
         <v-col cols="12" md="7">
           <v-card elevation="0" class="card-outlined">
             <v-toolbar color="transparent">
-              <v-toolbar-title class="title-color"
-                ><v-icon start>mdi-account-circle</v-icon> Profile
-                Information</v-toolbar-title
-              >
+              <v-toolbar-title class="title-color"><v-icon start>mdi-account-circle</v-icon> Profile
+                Information</v-toolbar-title>
             </v-toolbar>
             <v-divider></v-divider>
             <v-card-text class="py-10">
@@ -30,13 +20,8 @@
                   <v-sheet class="mr-8 label-color"> Faculty No </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="facultyno"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="facultyno"
+                    variant="outlined"></v-text-field></v-col>
               </v-row>
 
               <v-row dense justify="center">
@@ -44,39 +29,23 @@
                   <v-sheet class="mr-8 label-color"> Last name </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="lastname"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="lastname" variant="outlined"></v-text-field></v-col>
               </v-row>
               <v-row dense justify="center">
                 <v-col cols="12" md="3">
                   <v-sheet class="mr-8 label-color"> First name </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="firstname"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="firstname"
+                    variant="outlined"></v-text-field></v-col>
               </v-row>
               <v-row dense justify="center">
                 <v-col cols="12" md="3">
                   <v-sheet class="mr-8 label-color"> Middle name </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="middlename"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="middlename"
+                    variant="outlined"></v-text-field></v-col>
               </v-row>
 
               <v-row dense justify="center">
@@ -84,13 +53,8 @@
                   <v-sheet class="mr-8 label-color"> Department </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="department"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="department"
+                    variant="outlined"></v-text-field></v-col>
               </v-row>
               <v-row dense justify="center">
                 <v-col cols="12" md="3">
@@ -98,26 +62,18 @@
                   <v-sheet class="mr-8 label-color"> Email </v-sheet>
                 </v-col>
                 <v-col cols="12" md="8">
-                  <v-text-field
-                    density="compact"
-                    disabled
-                    v-model="email"
-                    variant="outlined"
-                  ></v-text-field
-                ></v-col>
+                  <v-text-field density="compact" disabled v-model="email" variant="outlined"></v-text-field></v-col>
               </v-row>
             </v-card-text>
           </v-card>
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" class="mb-5">
         <v-col cols="12" md="7">
           <v-card elevation="0" class="card-outlined">
             <v-toolbar color="transparent">
-              <v-toolbar-title class="title-color"
-                ><v-icon start>mdi-lock</v-icon> Change
-                Password</v-toolbar-title
-              >
+              <v-toolbar-title class="title-color"><v-icon start>mdi-lock</v-icon> Change
+                Password</v-toolbar-title>
             </v-toolbar>
             <v-divider></v-divider>
             <v-card-text class="py-10">
@@ -128,30 +84,19 @@
                     <v-sheet class="mr-8 label-color"> Username </v-sheet>
                   </v-col>
                   <v-col cols="12" md="8">
-                    <v-text-field
-                      density="compact"
-                      disabled
-                      v-model="username"
-                      variant="outlined"
-                    ></v-text-field
-                  ></v-col>
+                    <v-text-field density="compact" disabled v-model="username"
+                      variant="outlined"></v-text-field></v-col>
                 </v-row>
                 <v-row dense justify="center">
                   <v-col cols="12" md="3">
                     <!-- <v-list-subheader class="d-none d-md-block">Email</v-list-subheader> -->
-                    <v-sheet class="mr-8 label-color"> Old Password </v-sheet>
+                    <v-sheet class="mr-8 label-color"> Current Password </v-sheet>
                   </v-col>
                   <v-col cols="12" md="8">
-                    <v-text-field
-                      :type="showPass ? 'text' : 'password'"
-                      :rules="rules.oldPwdRules"
-                      v-model="oldPassword"
-                      :append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-                      @click:append-inner="showPass = !showPass"
-                      density="compact"
-                      variant="outlined"
-                    ></v-text-field
-                  ></v-col>
+                    <v-text-field :type="showOldPass ? 'text' : 'password'" :rules="rules.oldPwdRules"
+                      v-model="oldPassword" :append-inner-icon="showOldPass ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append-inner="showOldPass = !showOldPass" density="compact"
+                      variant="outlined"></v-text-field></v-col>
                 </v-row>
                 <v-row dense justify="center">
                   <v-col cols="12" md="3">
@@ -159,17 +104,11 @@
                     <v-sheet class="mr-8 label-color"> New Password </v-sheet>
                   </v-col>
                   <v-col cols="12" md="8">
-                    <v-text-field
-                      :type="showPass ? 'text' : 'password'"
-                      hint="Password must use 6 characters or more"
-                      :rules="rules.pwdRules"
-                      v-model="password"
+                    <v-text-field :type="showPass ? 'text' : 'password'" hint="Password must use 6 characters or more"
+                      :rules="rules.pwdRules" v-model="password"
                       :append-inner-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-                      @click:append-inner="showPass = !showPass"
-                      density="compact"
-                      variant="outlined"
-                    ></v-text-field
-                  ></v-col>
+                      @click:append-inner="showPass = !showPass" density="compact"
+                      variant="outlined"></v-text-field></v-col>
                 </v-row>
                 <v-row dense justify="center">
                   <v-col cols="12" md="3">
@@ -179,38 +118,22 @@
                     </v-sheet>
                   </v-col>
                   <v-col cols="12" md="8">
-                    <v-text-field
-                     :type="showConfPass ? 'text' : 'password'"
-                      v-model="confirmPassword"
-                      :rules="rules.pwdConfirmRules"
-                      :append-inner-icon="showConfPass ? 'mdi-eye' : 'mdi-eye-off'"
-                      @click:append-inner="showConfPass = !showConfPass"
-                      density="compact"
-                      variant="outlined"
-                    ></v-text-field
-                  ></v-col>
+                    <v-text-field :type="showConfPass ? 'text' : 'password'" v-model="confirmPassword"
+                      :rules="rules.pwdConfirmRules" :append-inner-icon="showConfPass ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append-inner="showConfPass = !showConfPass" density="compact"
+                      variant="outlined"></v-text-field></v-col>
                 </v-row>
               </v-form>
-              <!-- <v-row dense justify="center">
-              <v-col cols="12" md="3">
-              
-              </v-col>
-              <v-col cols="12" md="8" class="text-center"> 
-                <v-btn color="primary" width="100" variant="flat"><v-icon start>mdi-content-save</v-icon> Save</v-btn>
-              </v-col>
-            </v-row> -->
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions class="py-3">
               <v-spacer></v-spacer>
-              <v-btn
-                variant="flat"
-                class="text-capitalize"
-                color="primary"
-                :disabled="!valid"
-                @click="validate()"
-                ><v-icon start>mdi-content-save</v-icon> Update Password</v-btn
-              >
+              <v-btn variant="flat" :loading="loading" class="text-capitalize px-4" color="primary" :disabled="loading"
+                @click="validate()"><v-icon start>mdi-content-save</v-icon> Update Password
+                <template v-slot:loader>
+                  <VueSpinnerIos size="20" />&nbsp;Updating...
+                </template>
+              </v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -224,8 +147,14 @@
 import { storeToRefs } from "pinia";
 import { VueSpinnerBounce } from "vue3-spinners";
 import { useMyAuthStore } from "~/stores/auth";
+import { useToast } from "vue-toastification";
 const { userInfo } = storeToRefs(useMyAuthStore());
 const userData = ref(userInfo?.value.user);
+const token = useCookie('token')
+const config = useRuntimeConfig()
+const baseUrl = config.public.baseURL
+
+const toast = useToast();
 useHead({
   title: "Account",
 });
@@ -246,6 +175,7 @@ const breadcrumbs = ref([
   },
 ]);
 const loader = ref(true);
+const loading = ref(false);
 const userDetails = ref({});
 const userId = ref(null);
 const username = ref("");
@@ -260,6 +190,7 @@ const password = ref("");
 const confirmPassword = ref("");
 const changePasswordForm = ref(null);
 const valid = ref(true);
+const showOldPass = ref(false);
 const showPass = ref(false);
 const showConfPass = ref(false);
 
@@ -305,12 +236,69 @@ async function initialize() {
 async function validate() {
   const { valid, errors } = await changePasswordForm.value?.validate();
   if (valid) {
+    loading.value = true
     const payload = {
       old_password: oldPassword.value,
       new_password: password.value,
       confirm_password: confirmPassword.value
     }
-    console.log("Password changed", payload);
+    // console.log("Password changed", payload);
+    // console.log("Base Url: ", baseUrl);
+    // console.log("Token", token.value)
+
+    // const response = await fetch(`${baseUrl}/api/auth/change-password`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": `Bearer ${token.value}`
+    //   },
+    //   body: JSON.stringify({
+    //     currentPassword: oldPassword.value,
+    //     password: password.value,
+    //     passwordConfirmation: confirmPassword.value
+    //   })
+    // })
+    // const data = await response.json();
+    // console.log("Result: ", data.error)
+
+    await fetch(`${baseUrl}/api/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token.value}`
+      },
+      body: JSON.stringify({
+        currentPassword: oldPassword.value,
+        password: password.value,
+        passwordConfirmation: confirmPassword.value
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        //console.log("Data:", data)
+        if (data.data === null) {
+          //console.log("Data 1: ", data.error.message)
+          toast.error(data.error.message)
+
+          loading.value = false;
+        } else {
+          //console.log("Success")
+          loading.value = false;
+          toast.success("Password successfully changed!");
+          changePasswordForm.value?.reset();
+          username.value = userDetails.value.faculty_no
+        }
+        //console.log("Data: ", data);
+      })
+      .catch(err => {
+        console.log("Error: ", err)
+
+      })
+
+  } else {
+    loading.value = false;
+    toast.error(errors[0].errorMessages[0])
+    console.log("Error 1: ", errors[0].errorMessages[0]);
   }
 }
 

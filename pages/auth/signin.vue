@@ -130,7 +130,7 @@ const usernameRules = [
 const passwordRules = [(v) => !!v || "Password is required"];
 const snackbar = ref(false);
 const text = ref("HHHHHH");
-const version = ref("version 1.0.7.24")
+const version = ref("version 1.0.8.25")
 
 // FUNCTIONS
 async function login() {
@@ -148,7 +148,8 @@ async function login() {
       loading.value = false;
       //console.log("Error Message:", errorMessage.value)
       if (errorMessage.value == "") {
-        text.value = "Invalid identifier or password";
+        //text.value = "Invalid1 identifier or password";
+        text.value = errorMessage.value
       } else {
         text.value = errorMessage.value;
         //text.value =  "Invalid identifier or password";
