@@ -1,7 +1,8 @@
 <template>
   <div>
-    <v-btn icon color="green" size="small" class="text-capitalize my-4" @click="generatePDF">
-      <v-icon size="large">mdi-printer</v-icon>
+    <v-btn color="blue" variant="elevated" class="text-capitalize my-4" :disabled="loading" :loading="loading"
+      @click="generatePDF">
+      <v-icon size="large" start>mdi-printer</v-icon> Print
       <v-tooltip activator="parent" location="top">Print</v-tooltip>
     </v-btn>
   </div>
@@ -11,11 +12,13 @@
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 const pdfContent = ref(null);
+const loading = ref(false)
 
 const props = defineProps(["classStudentList", "userData"]);
 
 async function generatePDF() {
   var pdf = new jsPDF();
+  loading.value = true;
 
   for (var i in props.classStudentList) {
     // Add Header
@@ -161,13 +164,15 @@ async function generatePDF() {
   }
 
 
-
+  
   pdf.autoPrint();
   var w = 600;
   var h = 600;
   var left = (window.innerWidth / 2) - (w / 2);
   var top = (window.innerHeight / 2) - (h / 2);
   window.open(pdf.output('bloburl'), '_blank', 'modal,location=no,menubar=no, scrollbars=no,titlebar=no,toolbar=no,top=' + top + ',left=' + left + ',width=' + w + ',height=' + h + '');
+
+  loading.value = false
 }
 
 </script>

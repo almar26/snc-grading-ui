@@ -81,7 +81,7 @@
                       <v-icon>mdi-folder</v-icon>
                       <v-toolbar-title>Current Classes</v-toolbar-title>
                       <v-spacer></v-spacer>
-                       <PrintAllGradingSheet :classStudentList="classStudentList" :userData="userData"/>
+                       <PrintAllGradingSheet v-if="dataIsLoaded" :classStudentList="classStudentList" :userData="userData" class="mr-3"/>
                       <v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated" prepend-icon="mdi-plus"
                         color="primary" @click="showAddCourseDialog()">Create Class</v-btn></v-toolbar>
                   </v-card>
@@ -410,6 +410,7 @@ const classList = ref([]);
 const classSettings = ref({});
 const inactiveSY = ref([]);
 const classStudentList = ref([])
+const dataIsLoaded = ref(false)
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
   subjectDesc: [(v) => !!v || "Subject description is required"],
@@ -592,6 +593,7 @@ async function getClassWithStudentGrade(ctx) {
 
     if(result) {
       classStudentList.value = result;
+      dataIsLoaded.value = true;
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
