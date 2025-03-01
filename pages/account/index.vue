@@ -296,8 +296,8 @@ async function validate() {
       })
 
   } else {
-    loading.value = false;
-    toast.error(errors[0].errorMessages[0])
+    //loading.value = false;
+    //toast.error(errors[0].errorMessages[0])
     console.log("Error 1: ", errors[0].errorMessages[0]);
   }
 }

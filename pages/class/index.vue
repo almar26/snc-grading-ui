@@ -80,7 +80,9 @@
                     <v-toolbar density="comfortable" color="white" class="px-4">
                       <v-icon>mdi-folder</v-icon>
                       <v-toolbar-title>Current Classes</v-toolbar-title>
-                      <v-spacer></v-spacer><v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated" prepend-icon="mdi-plus"
+                      <v-spacer></v-spacer>
+                       <PrintAllGradingSheet :classStudentList="classStudentList" :userData="userData"/>
+                      <v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated" prepend-icon="mdi-plus"
                         color="primary" @click="showAddCourseDialog()">Create Class</v-btn></v-toolbar>
                   </v-card>
                   <v-card v-if="noData" elevation="0"
@@ -362,6 +364,7 @@ import { useMyAuthStore } from "~/stores/auth";
 import { useToast } from "vue-toastification";
 const { userInfo } = storeToRefs(useMyAuthStore());
 const userData = ref(userInfo?.value.user);
+const route = useRoute();
 useHead({
   title: "Classes",
 });
@@ -406,6 +409,7 @@ const createClassForm = ref(null);
 const classList = ref([]);
 const classSettings = ref({});
 const inactiveSY = ref([]);
+const classStudentList = ref([])
 const rules = ref({
   subjectCode: [(v) => !!v || "Subject code is required"],
   subjectDesc: [(v) => !!v || "Subject description is required"],
@@ -418,6 +422,8 @@ const rules = ref({
   timeStart: [(v) => !!v || "Time Start is required"],
   timeEnd: [(v) => !!v || "Time End is required"],
 });
+
+
 async function initialize() {
   try {
     let result = await $fetch(
@@ -580,6 +586,19 @@ async function createClass() {
   }
 }
 
+async function getClassWithStudentGrade(ctx) {
+  try {
+    let result = await $fetch(`/api/class/getClassesWithStudents?teacher_id=${userData.value.teacher_id}&sy=${schoolYear.value}&semester=${semester.value}`);
+
+    if(result) {
+      classStudentList.value = result;
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
 async function classDetails(item) {
   console.log("Hello Class", item);
 }
@@ -589,6 +608,7 @@ onMounted(async () => {
   await getClassSettings();
   await getInactiveSchoolyear();
   await initialize();
+  await getClassWithStudentGrade()
 
 });
 

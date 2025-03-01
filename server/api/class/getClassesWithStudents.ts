@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const token = cookies?.token;
     const result = await axios.get(
-      `${BASE_URL}/api/class/list/student-list?teacherid=${query.teacher_id}&classid=${query.class_id}&sy=${query.sy}&semester=${query.semester}`,
+      `${BASE_URL}/api/class/list/student-list/classes?teacherid=${query.teacher_id}&sy=${query.sy}&semester=${query.semester}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

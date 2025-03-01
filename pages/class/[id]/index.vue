@@ -24,6 +24,7 @@
             <v-toolbar-title class="card-title text-body-1">Details
             </v-toolbar-title>
             <v-spacer></v-spacer>
+            <PrintGradingSheet :studentSubjectList="studentSubjectList" :classDetails="classDetails" :userData="userData"/>
             <div v-if="finalizeClass == null || finalizeClass == false">
               <v-btn color="warning" icon size="small" variant="text" @click="showUpdateClassDialog()"><v-icon
                   size="large">mdi-pencil</v-icon>
@@ -74,11 +75,13 @@
               <v-list-item-title class="desc">{{ classDetails.time_start }} -
                 {{ classDetails.time_end }}</v-list-item-title>
             </v-list-item> -->
+            
           </v-list>
 
           <!-- <v-divider></v-divider> -->
 
           <v-card-actions v-if="finalizeClass == null || finalizeClass == false">
+            
             <v-btn prepend-icon="mdi-check-circle" @click="finalizedClassDialog = true" color="green" variant="flat"
               block>Finalize</v-btn>
           </v-card-actions>
@@ -86,8 +89,10 @@
       </v-col>
       <v-col cols="12" md="9">
         <v-card variant="flat">
-          <v-toolbar color="transparent" class="pr-3" density="comfortable"
+          <v-toolbar color="transparent" class="px-3" density="comfortable"
             v-if="finalizeClass == null || finalizeClass == false">
+            
+            
             <v-spacer></v-spacer>
             <v-btn variant="flat" color="blue" class="text-capitalize px-4 mr-2" @click="showImportStudentDialog()">
               <v-icon start>mdi-import</v-icon>Import Student</v-btn>
@@ -692,6 +697,7 @@ async function initialize() {
         isEmpty.value = true;
         //loading.value = false;
       }
+      console.log("User Data: ", userData.value)
       classDetails.value = result[0];
       subjectCode.value = result[0].subject_code;
       subjectDesc.value = result[0].subject_description;
@@ -1000,7 +1006,7 @@ async function showImportStudentDialog() {
 
 async function getClassStudents(ctx) {
   try {
-    let result = await $fetch(`/api/class/getClassStudents?teacher_id=${userData.value.teacher_id}&class_id=${route.params.id}`);
+    let result = await $fetch(`/api/class/getClassStudents?teacher_id=${userData.value.teacher_id}&class_id=${route.params.id}&sy=${activeSY.value}&semester=${activeSemester.value}`);
 
     if (result) {
       //console.log("Classes List: ", result);
