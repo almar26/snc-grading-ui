@@ -26,8 +26,7 @@
                   </v-card>
                 </v-col>
                 <v-col cols="12">
-                  <v-card v-if="noPrevData" elevation="0"
-                    class="text-center d-flex align-center justify-center">
+                  <v-card v-if="noPrevData" elevation="0" class="text-center d-flex align-center justify-center">
                     <v-card-text class="py-15">
                       <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
                       <h2 class="text-grey-darken-1">No Data Available</h2>
@@ -40,7 +39,7 @@
                     <v-list lines="two" nav>
                       <div v-for="item in inactiveSY" :key="item.id">
                         <v-list-item :to="`/class/sy?school_year=${item.school_year}&semester=${item.semester}`">
-                          <template v-slot:prepend> 
+                          <template v-slot:prepend>
                             <v-avatar class="bg-grey-lighten-1 text-white" icon="mdi-folder"></v-avatar>
                           </template>
                           <v-list-item-title>{{ item.school_year }}</v-list-item-title>
@@ -81,12 +80,13 @@
                       <v-icon>mdi-folder</v-icon>
                       <v-toolbar-title>Current Classes</v-toolbar-title>
                       <v-spacer></v-spacer>
-                       <PrintAllGradingSheet v-if="dataIsLoaded" :classStudentList="classStudentList" :userData="userData" class="mr-3"/>
-                      <v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated" prepend-icon="mdi-plus"
-                        color="primary" @click="showAddCourseDialog()">Create Class</v-btn></v-toolbar>
+                      <PrintAllGradingSheet v-if="dataIsLoaded" :classStudentList="classStudentList"
+                        :userData="userData" class="mr-3" />
+                      <v-btn class="text-capitalize" v-if="classSettings.enable_create_class == true" variant="elevated"
+                        prepend-icon="mdi-plus" color="primary" @click="showAddCourseDialog()">Create Class</v-btn>
+                    </v-toolbar>
                   </v-card>
-                  <v-card v-if="noData" elevation="0"
-                    class="text-center d-flex align-center justify-center">
+                  <v-card v-if="noData" elevation="0" class="text-center d-flex align-center justify-center">
                     <v-card-text class="py-15">
                       <v-icon size="70" color="grey-darken-1">mdi-information-outline</v-icon>
                       <h2 class="text-grey-darken-1">No Data Available</h2>
@@ -102,10 +102,10 @@
                     <v-row no-gutters>
                       <v-col cols="2" md="1">
                         <v-sheet height="80" class="d-flex align-center justify-center">
-                        <v-avatar>
-                          <v-icon size="35">mdi-file</v-icon>
-                        </v-avatar>
-                      </v-sheet>
+                          <v-avatar>
+                            <v-icon size="35">mdi-file</v-icon>
+                          </v-avatar>
+                        </v-sheet>
                       </v-col>
                       <v-col cols="10" md="4" class="pl-5">
                         <div class="c-name mt-3">{{ item.subject_code }}</div>
@@ -229,8 +229,12 @@
                   :rules="rules.subjectCode"
                   required
                 ></v-text-field> -->
-                <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
-                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select>
+                <!-- <v-select color="primary" :items="subjectList" item-title="code" item-value="code" label="Subject Code*"
+                  v-model="subjectCode" :rules="rules.subjectCode" variant="outlined" return-object required></v-select> -->
+
+                  <v-autocomplete variant="outlined" color="primary" v-model="subjectCode" :items="subjectList" item-title="code" item-value="code" label="Subject Code" :rules="rules.subjectCode" return-object></v-autocomplete>
+
+                
               </v-col>
 
               <v-col cols="12">
@@ -490,7 +494,7 @@ async function getInactiveSchoolyear() {
         //console.log("No Previous Data Available")
         noPrevData.value = true;
       }
-      
+
       //console.log("Active School Year: ", result[0])
     }
   } catch (err) {
@@ -591,7 +595,7 @@ async function getClassWithStudentGrade(ctx) {
   try {
     let result = await $fetch(`/api/class/getClassesWithStudents?teacher_id=${userData.value.teacher_id}&sy=${schoolYear.value}&semester=${semester.value}`);
 
-    if(result) {
+    if (result) {
       classStudentList.value = result;
       dataIsLoaded.value = true;
     }

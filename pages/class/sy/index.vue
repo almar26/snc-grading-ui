@@ -2,9 +2,7 @@
   <div>
     <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
     <!-- <v-card variant="flat">
-
       <v-data-table density="compact" :items="studentSubjectList" :headers="headers" :loading="loading">
-            
           </v-data-table>
     </v-card> -->
     <v-skeleton-loader v-if="loader" class="mx-auto" elevation="0" color="transparent" :loading="loader"
@@ -28,7 +26,9 @@
         </v-card>
       </v-col>
       <v-col cols="12" v-for="item in classList" :key="item.id">
-        <v-card elevation="0" class="c-card mb-2" @click="openViewClassDialog(item)" :loading="false">
+
+        <!-- <v-card elevation="0" class="c-card mb-2" @click="openViewClassDialog(item)" :loading="false"> -->
+        <v-card elevation="0" class="c-card mb-2" :to="`/class/${item.documentId}`" :loading="false">
           <v-row no-gutters>
             <v-col cols="2" md="1">
               <v-sheet height="80" class="d-flex align-center justify-center">
@@ -109,9 +109,9 @@
                     <v-icon size="30">mdi-text-box-check</v-icon>
                   </v-btn>
                 </template>
-</v-tooltip>
-</template>
-</v-data-table> -->
+      </v-tooltip>
+      </template>
+      </v-data-table> -->
 
         <v-data-table class="table-2" density="compact" :items="studentSubjectList" :headers="classHeaders"
           :loading="loading2"></v-data-table>
