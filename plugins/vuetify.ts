@@ -25,9 +25,9 @@ const customLightTheme = {
 
 export default defineNuxtPlugin((nuxtApp) => {
     const vuetify = createVuetify({
-        components: {
-            VTimePicker
-        },
+        // components: {
+        //     VTimePicker
+        // },
         theme: {
             defaultTheme: 'customLightTheme',
             themes: {
