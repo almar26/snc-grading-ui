@@ -62,6 +62,28 @@
       </v-list>
     </v-dialog>
 
+    <!-- Select school year and semester before generate grades -->
+     <v-dialog v-model="selectSYSemDialog" max-width="500">
+      <v-card elevation="0">
+          <v-toolbar color="primary" density="compact">
+          <v-icon class="ml-4">mdi-notebook</v-icon>
+          <v-toolbar-title> Select School Year and Semester</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="selectSYSemDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text class="mx-5">
+          <v-form class="my-5">
+            <v-select label="Select School Year" variant="outlined" v-model="selectSY" :items="school_year" item-title="school_year" item-value="school_year" return-object></v-select>
+            <v-select label="Select Semester" variant="outlined" v-model="selectSem" :items="['1st Semester', '2nd Semester', 'Summer']"></v-select>
+            <v-btn color="primary" @click="selectedSYSem"  block>Proceed</v-btn>
+          </v-form>
+        </v-card-text>
+      </v-card>
+     </v-dialog>
+
+
     <!-- Student Report Card Generated Dialog Box-->
     <v-dialog v-model="generatedReportCardDialog" max-width="850" scrollable persistent>
       <v-card elevation="0">
@@ -221,6 +243,7 @@ const reportHeaders = ref([
   { title: "Teacher", sortable: false, key: "teachers" },
 
 ])
+
 const toast = useToast();
 const menu = ref(false)
 const search = ref(null)
@@ -243,6 +266,10 @@ const major = ref("")
 const gradesResult = ref([])
 const semester = ref("");
 const schoolYear = ref("");
+const selectSYSemDialog = ref(false);
+const selectSY = ref(null)
+const selectSem = ref(null)
+const school_year = ref([])
 
 async function searchStudent() {
   //console.log("search student")
@@ -276,6 +303,23 @@ async function searchStudent() {
   }
 }
 
+// Selected School Year Function
+async function selectedSYSem() {
+
+  schoolYear.value = selectSY.value?.school_year
+  semester.value = selectSem.value
+
+  const payload = {
+    school_year: schoolYear.value,
+    semester: semester.value
+  }
+
+  console.log(payload)
+    selectSYSemDialog.value = false;
+  generateReportLoader.value = true
+  showGeneratedReport()
+}
+
 async function generateReport(item) {
   //console.log(item)
   studentDetails.value = item;
@@ -289,7 +333,10 @@ async function generateReport(item) {
   loaderIcon.value = "mdi-notebook"
   loaderTitle.value = "Generating report..."
   generateReportLoader.value = true
-  showGeneratedReport()
+  //showGeneratedReport()
+
+  selectSYSemDialog.value = true;
+  getListOfSchoolYear()
 
 }
 async function getActiveSchoolyear() {
@@ -300,6 +347,21 @@ async function getActiveSchoolyear() {
       semester.value = result[0].semester
       schoolYear.value = result[0].school_year;
       //console.log("Active School Year: ", result[0])
+    }
+  } catch (err) {
+    console.error("Failed to fetch data: ", err);
+    throw err;
+  }
+}
+
+async function getListOfSchoolYear() {
+  try {
+    let result = await $fetch("/api/school-year/list");
+
+    if (result) {
+      console.log("List of School Year: ", result)
+      school_year.value = result;
+
     }
   } catch (err) {
     console.error("Failed to fetch data: ", err);
