@@ -5,8 +5,8 @@ WORKDIR /usr/src/myapp
 # update and install dependency
 RUN apk add --no-cache git
 
-COPY package.json ./
-RUN yarn install
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
 
